@@ -1,5 +1,5 @@
 
-const API_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL";
+const API_URL = "https://script.google.com/a/macros/jalsd.org/s/AKfycbyndNGga2a7EiXn9uyWljsX71y2njJ2PKvU-PLA9gRjvfNB46Z_GCx6sFX_pdxZHpjNFQ/exec";
 
 const input = document.getElementById("url");
 const message = document.getElementById("message");
