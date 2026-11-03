@@ -3,36 +3,84 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Planner - ProgressBook</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h2>Lunar</h2>
-    <span>PRIVATE WEB PORTAL</span>
-  </header>
+
+  <nav class="top-nav">
+    <div class="nav-left">
+      <a href="#">About</a>
+      <a href="#">Privacy</a>
+    </div>
+
+    <div class="nav-right">
+      <a href="#">Settings</a>
+      <div class="profile">M</div>
+    </div>
+  </nav>
 
   <main>
-    <h1>Browse the web.</h1>
-    <p>A simple web access portal.</p>
+    <div class="logo">
+      <span class="blue">M</span><span class="red">y</span><span class="yellow">P</span><span class="blue">r</span><span class="green">o</span><span class="red">x</span><span class="blue">y</span>
+    </div>
+
+    <p class="subtitle">A simpler way to explore the web.</p>
 
     <form id="searchForm">
-      <input id="url"
-        type="text"
-        placeholder="Enter a website URL..."
-        required>
-      <button type="submit">GO →</button>
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input
+          type="text"
+          id="url"
+          placeholder="Search or enter a website URL"
+          autocomplete="off"
+          required
+        >
+        <button type="submit" aria-label="Search">➜</button>
+      </div>
     </form>
 
-    <p id="message"></p>
+    <div class="shortcuts" id="shortcuts">
+      <div class="shortcut" data-url="https://www.google.com">
+        <div class="shortcut-icon google">G</div>
+        <span>Google</span>
+      </div>
 
-    <p class="disclaimer">
-      Independent educational project.
-      Not affiliated with CroxyPr0xy.
-    </p>
+      <div class="shortcut" data-url="https://www.youtube.com">
+        <div class="shortcut-icon youtube">▶</div>
+        <span>YouTube</span>
+      </div>
+
+      <div class="shortcut" data-url="https://www.wikipedia.org">
+        <div class="shortcut-icon wiki">W</div>
+        <span>Wikipedia</span>
+      </div>
+
+      <div class="shortcut" data-url="https://www.reddit.com">
+        <div class="shortcut-icon reddit">r</div>
+        <span>Reddit</span>
+      </div>
+
+      <div class="shortcut" data-url="https://www.instagram.com">
+        <div class="shortcut-icon instagram">◎</div>
+        <span>Instagram</span>
+      </div>
+
+      <div class="shortcut" data-url="https://www.tiktok.com">
+        <div class="shortcut-icon tiktok">♪</div>
+        <span>TikTok</span>
+      </div>
+    </div>
+
+    <div id="message"></div>
   </main>
+
+  <footer>
+    <span>MyProxy</span>
+    <span>Explore the web your way.</span>
+  </footer>
 
   <script src="script.js"></script>
 </body>
