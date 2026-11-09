@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -265,6 +266,7 @@ main {
     border: none;
     z-index: 9999;
     background: white;
+    pointer-events: none;
 }
 
 body.nebula-mode #defaultFrame {
@@ -285,6 +287,7 @@ body:not(.nebula-mode) #stars {
     id="defaultFrame"
     src="https://www.desmos.com/testing/ohio/scientific"
     allow="fullscreen"
+    tabindex="-1"
 ></iframe>
 
 <canvas id="stars"></canvas>
@@ -802,9 +805,8 @@ window.addEventListener("keydown", event => {
 
     if (
         event.ctrlKey &&
-        (event.code === "Backquote" ||
-         event.key === "q" ||
-         event.key === "q")
+        event.code === "KeyQ" &&
+        !event.repeat
     ) {
         event.preventDefault();
 
@@ -816,7 +818,7 @@ window.addEventListener("keydown", event => {
         );
     }
 
-});
+}, true);
 
 
 /* STARTUP */
