@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Planner - ProgressBook</title>
+<title>Nebula</title>
 
 <style>
 * {
@@ -14,13 +14,15 @@
 }
 
 body {
-    background: #080910;
+    background: #070810;
     color: white;
     font-family: Arial, sans-serif;
+    height: 100vh;
     overflow: hidden;
 }
 
-/* Background */
+/* CONSTELLATION BACKGROUND */
+
 #stars {
     position: fixed;
     inset: 0;
@@ -30,199 +32,208 @@ body {
     pointer-events: none;
 }
 
-/* Browser tabs */
-.tab-bar {
-    height: 48px;
-    width: 100%;
-    background: #10111b;
-    display: flex;
-    align-items: center;
-    padding: 7px 10px;
-    gap: 7px;
+/* BROWSER */
+
+.browser {
     position: relative;
     z-index: 10;
-    border-bottom: 1px solid #222331;
+}
+
+.tab-bar {
+    height: 45px;
+    background: #11121b;
+    display: flex;
+    align-items: flex-end;
+    padding: 5px 10px 0;
+    gap: 7px;
 }
 
 .tabs {
     display: flex;
-    align-items: center;
-    gap: 5px;
+    align-items: flex-end;
     height: 100%;
-    overflow-x: auto;
+    gap: 5px;
     flex: 1;
+    overflow-x: auto;
+}
+
+.tabs::-webkit-scrollbar {
+    display: none;
 }
 
 .tab {
-    height: 34px;
+    height: 35px;
     min-width: 130px;
     max-width: 220px;
-    background: #191a27;
+    flex: 1;
+    background: #1b1c28;
     border-radius: 9px 9px 0 0;
     display: flex;
     align-items: center;
-    padding: 0 10px;
-    gap: 8px;
+    gap: 9px;
+    padding: 0 12px;
+    color: #aaa;
     cursor: pointer;
-    color: #aaaabb;
     font-size: 12px;
-    flex: 1;
 }
 
 .tab.active {
-    background: #080910;
+    background: #070810;
     color: white;
 }
 
-.tab-name {
+.tab-title {
     flex: 1;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
-.close-tab {
-    border: none;
-    background: none;
-    color: #888;
-    cursor: pointer;
-    font-size: 17px;
-}
-
-.close-tab:hover {
-    color: white;
-}
-
-.new-tab {
-    border: none;
+.tab-close {
     background: transparent;
-    color: white;
-    font-size: 23px;
+    border: none;
+    color: #999;
+    font-size: 18px;
     cursor: pointer;
+}
+
+.tab-close:hover {
+    color: white;
+}
+
+.add-tab {
     width: 34px;
     height: 34px;
-    border-radius: 8px;
-}
-
-.new-tab:hover {
-    background: #292a3a;
-}
-
-/* Navigation bar */
-.navigation {
-    height: 42px;
-    background: #080910;
-    display: flex;
-    align-items: center;
-    padding: 0 15px;
-    gap: 12px;
-    position: relative;
-    z-index: 5;
-}
-
-.nav-btn {
     border: none;
+    border-radius: 7px;
     background: transparent;
-    color: #999;
-    font-size: 20px;
+    color: white;
+    font-size: 24px;
     cursor: pointer;
 }
 
-.nav-btn:hover {
+.add-tab:hover {
+    background: #292a39;
+}
+
+/* NAVIGATION */
+
+.navigation {
+    height: 43px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 13px;
+    background: #080910;
+    border-bottom: 1px solid #242532;
+}
+
+.nav-button {
+    background: transparent;
+    border: none;
+    color: #999;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.nav-button:hover {
     color: white;
 }
 
 .address {
     flex: 1;
     height: 30px;
-    background: #171824;
-    border: 1px solid #292a39;
     border-radius: 20px;
+    background: #191a26;
+    border: 1px solid #303143;
     color: white;
-    padding: 0 15px;
+    padding: 0 14px;
     outline: none;
     font-size: 12px;
 }
 
 .address:focus {
-    border-color: #6666a8;
+    border-color: #8585bd;
 }
 
-/* Main content */
+/* MAIN */
+
 main {
     position: absolute;
-    top: 90px;
+    top: 88px;
     left: 0;
-    width: 100%;
-    height: calc(100% - 90px);
+    right: 0;
+    bottom: 0;
     z-index: 1;
 }
+
+/* HOMEPAGE */
 
 .homepage {
     position: absolute;
     inset: 0;
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
-    padding-bottom: 65px;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 50px;
+    background: transparent;
 }
 
 .logo {
-    font-size: 65px;
+    font-size: 68px;
     font-weight: 700;
     letter-spacing: -3px;
-    color: #fff;
+    color: white;
     margin-bottom: 30px;
-    text-shadow: 0 0 30px #7777ff33;
+    user-select: none;
+    text-shadow: 0 0 35px rgba(150,150,255,0.15);
 }
+
+/* SEARCH BOX */
 
 .search-box {
     width: min(550px, 85%);
-    height: 58px;
-    background: rgba(25, 26, 40, 0.88);
-    border: 1px solid #38394c;
-    border-radius: 15px;
+    height: 60px;
     display: flex;
     align-items: center;
-    padding: 0 19px;
-    gap: 13px;
+    gap: 14px;
+    padding: 0 20px;
+    border-radius: 16px;
+    background: rgba(24,25,38,0.88);
+    border: 1px solid #48495d;
+    backdrop-filter: blur(12px);
     transition: 0.2s;
-    backdrop-filter: blur(10px);
 }
 
 .search-box:focus-within {
-    border-color: #7777bb;
-    box-shadow: 0 0 25px #7777bb22;
+    border-color: #9999d5;
+    box-shadow: 0 0 25px rgba(130,130,255,0.13);
 }
 
 .search-icon {
-    font-size: 23px;
-    color: #85859d;
+    display: flex;
+    color: #c4c4d2;
 }
 
-.search-box input {
+.search-input {
     flex: 1;
+    width: 100%;
     background: transparent;
     border: none;
     outline: none;
     color: white;
-    font-size: 15px;
-    width: 100%;
+    font-size: 16px;
 }
 
-.search-box input::placeholder {
-    color: #85859b;
+.search-input::placeholder {
+    color: #c0c0cc;
+    opacity: 1;
 }
 
-.hint {
-    color: #77778a;
-    font-size: 11px;
-    margin-top: 17px;
-}
+/* IFRAMES */
 
-/* Iframes */
-.browser-frame {
+.page-frame {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -232,12 +243,22 @@ main {
     display: none;
 }
 
-.browser-frame.active {
+.page-frame.active {
     display: block;
 }
 
-.hidden {
-    display: none !important;
+@media(max-width: 600px) {
+    .logo {
+        font-size: 55px;
+    }
+
+    .search-box {
+        width: 90%;
+    }
+
+    .tab {
+        min-width: 110px;
+    }
 }
 </style>
 </head>
@@ -246,90 +267,106 @@ main {
 
 <canvas id="stars"></canvas>
 
-<!-- Tabs -->
-<div class="tab-bar">
-    <div class="tabs" id="tabs"></div>
-    <button class="new-tab" onclick="addTab()" title="New tab">+</button>
-</div>
+<div class="browser">
 
-<!-- Navigation -->
-<div class="navigation">
-    <button class="nav-btn" onclick="goBack()" title="Back">‹</button>
-    <button class="nav-btn" onclick="goForward()" title="Forward">›</button>
-    <button class="nav-btn" onclick="reloadPage()" title="Reload">⟳</button>
-    <input class="address" id="address" placeholder="Search or enter website address"
-        onkeydown="if(event.key==='Enter') navigate(this.value)">
+    <div class="tab-bar">
+        <div class="tabs" id="tabs"></div>
+        <button class="add-tab" onclick="newTab()">+</button>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-button" onclick="goBack()">‹</button>
+        <button class="nav-button" onclick="goForward()">›</button>
+        <button class="nav-button" onclick="reloadPage()">⟳</button>
+
+        <input
+            class="address"
+            id="address"
+            placeholder="Search or enter website address"
+            onkeydown="if(event.key==='Enter') navigate(this.value)"
+        >
+    </div>
+
 </div>
 
 <main id="main">
 
-    <!-- Homepage -->
     <div class="homepage" id="homepage">
+
         <div class="logo">Nebula</div>
 
         <div class="search-box">
-            <span class="search-icon">⌕</span>
+
+            <span class="search-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round">
+                    <circle cx="10.8" cy="10.8" r="7.2"/>
+                    <path d="m16 16 5 5"/>
+                </svg>
+            </span>
+
             <input
+                class="search-input"
                 id="search"
-                type="text"
                 placeholder="example.com"
                 autocomplete="off"
                 onkeydown="if(event.key==='Enter') navigate(this.value)"
             >
+
         </div>
 
-        <div class="hint">Explore beyond the stars.</div>
     </div>
 
 </main>
 
 <script>
 
-/* Browser system */
+/* =================================
+   BROWSER SYSTEM
+================================= */
 
 let tabs = [];
 let activeTab = null;
-let nextId = 0;
+let tabCounter = 0;
 
-const tabsContainer = document.getElementById("tabs");
-const main = document.getElementById("main");
-const address = document.getElementById("address");
+const tabsElement = document.getElementById("tabs");
 const homepage = document.getElementById("homepage");
+const address = document.getElementById("address");
+const main = document.getElementById("main");
 
-function addTab() {
-    const id = nextId++;
+function newTab() {
+
+    const id = tabCounter++;
 
     const tab = {
         id,
-        name: "New Tab",
+        title: "Nebula",
         url: "",
         history: [],
         historyIndex: -1,
-        iframe: null
+        iframe: null,
+        element: null
     };
 
-    tabs.push(tab);
-
     const iframe = document.createElement("iframe");
-    iframe.className = "browser-frame";
+    iframe.className = "page-frame";
     iframe.dataset.id = id;
-    iframe.style.display = "none";
 
     main.appendChild(iframe);
     tab.iframe = iframe;
 
     const element = document.createElement("div");
     element.className = "tab";
-    element.dataset.id = id;
 
     element.innerHTML = `
-        <span style="color:#888">✦</span>
-        <span class="tab-name">New Tab</span>
-        <button class="close-tab" title="Close tab">×</button>
+        <span style="color:#aaa">✦</span>
+        <span class="tab-title">Nebula</span>
+        <button class="tab-close">×</button>
     `;
 
-    element.addEventListener("click", (e) => {
-        if (e.target.classList.contains("close-tab")) {
+    element.addEventListener("click", function(e) {
+        if (e.target.classList.contains("tab-close")) {
             e.stopPropagation();
             closeTab(id);
         } else {
@@ -337,65 +374,70 @@ function addTab() {
         }
     });
 
-    tabsContainer.appendChild(element);
+    tabsElement.appendChild(element);
+    tab.element = element;
+
+    tabs.push(tab);
 
     switchTab(id);
 }
 
+function getActiveTab() {
+    return tabs.find(t => t.id === activeTab);
+}
+
 function switchTab(id) {
+
     activeTab = id;
 
     tabs.forEach(tab => {
+
         const selected = tab.id === id;
 
-        tab.iframe.style.display = selected ? "block" : "none";
+        tab.element.classList.toggle("active", selected);
 
-        const element = tabsContainer.querySelector(
-            `[data-id="${tab.id}"]`
+        tab.iframe.classList.toggle(
+            "active",
+            selected && !!tab.url
         );
 
-        element.classList.toggle("active", selected);
     });
 
     const tab = getActiveTab();
 
-    homepage.classList.toggle("hidden", !!tab.url);
+    homepage.style.display = tab.url ? "none" : "flex";
+
     address.value = tab.url || "";
 
     if (!tab.url) {
-        address.placeholder = "Search or enter website address";
+        document.getElementById("search").value = "";
     }
 }
 
-function getActiveTab() {
-    return tabs.find(tab => tab.id === activeTab);
-}
-
 function closeTab(id) {
-    const index = tabs.findIndex(tab => tab.id === id);
+
+    const index = tabs.findIndex(t => t.id === id);
+
     if (index === -1) return;
 
     const tab = tabs[index];
 
     tab.iframe.remove();
-
-    tabsContainer.querySelector(
-        `[data-id="${id}"]`
-    ).remove();
+    tab.element.remove();
 
     tabs.splice(index, 1);
 
     if (tabs.length === 0) {
-        addTab();
+        newTab();
     } else if (activeTab === id) {
-        const newIndex = Math.max(0, index - 1);
-        switchTab(tabs[newIndex].id);
+        switchTab(tabs[Math.max(0, index - 1)].id);
     }
 }
 
-/* Navigation */
+/* URL NAVIGATION */
 
-function normalizeURL(value) {
+function formatURL(value) {
+
     value = value.trim();
 
     if (!value) return null;
@@ -413,13 +455,18 @@ function normalizeURL(value) {
 }
 
 function navigate(value) {
-    const url = normalizeURL(value);
+
+    const url = formatURL(value);
+
     if (!url) return;
 
     const tab = getActiveTab();
 
     tab.url = url;
-    tab.name = url.replace(/^https?:\/\//, "").split("/")[0];
+
+    tab.title = url
+        .replace(/^https?:\/\//, "")
+        .split("/")[0];
 
     tab.history = tab.history.slice(0, tab.historyIndex + 1);
     tab.history.push(url);
@@ -427,44 +474,45 @@ function navigate(value) {
 
     tab.iframe.src = url;
 
-    const element = tabsContainer.querySelector(
-        `[data-id="${tab.id}"]`
-    );
-
-    element.querySelector(".tab-name").textContent = tab.name;
+    tab.element.querySelector(".tab-title").textContent = tab.title;
 
     switchTab(tab.id);
 }
 
 function goBack() {
+
     const tab = getActiveTab();
 
     if (tab.historyIndex > 0) {
         tab.historyIndex--;
-        const url = tab.history[tab.historyIndex];
-        tab.url = url;
-        tab.iframe.src = url;
-        address.value = url;
-    } else {
-        try { tab.iframe.contentWindow.history.back(); } catch(e) {}
+        tab.url = tab.history[tab.historyIndex];
+        tab.iframe.src = tab.url;
+        address.value = tab.url;
+    } else if (tab.url) {
+        try {
+            tab.iframe.contentWindow.history.back();
+        } catch(e) {}
     }
 }
 
 function goForward() {
+
     const tab = getActiveTab();
 
     if (tab.historyIndex < tab.history.length - 1) {
         tab.historyIndex++;
-        const url = tab.history[tab.historyIndex];
-        tab.url = url;
-        tab.iframe.src = url;
-        address.value = url;
-    } else {
-        try { tab.iframe.contentWindow.history.forward(); } catch(e) {}
+        tab.url = tab.history[tab.historyIndex];
+        tab.iframe.src = tab.url;
+        address.value = tab.url;
+    } else if (tab.url) {
+        try {
+            tab.iframe.contentWindow.history.forward();
+        } catch(e) {}
     }
 }
 
 function reloadPage() {
+
     const tab = getActiveTab();
 
     if (tab.url) {
@@ -472,124 +520,503 @@ function reloadPage() {
     }
 }
 
-/* Constellation background */
+
+/* =================================
+   NEBULA INFINITE CONSTELLATIONS
+================================= */
 
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
-let stars = [];
-let connections = [];
+let width = window.innerWidth;
+let height = window.innerHeight;
+
+let constellations = [];
+
+let mouse = {
+    x: -1000,
+    y: -1000,
+    active: false
+};
+
+// Animation settings
+
+const SETTINGS = {
+    speed: 32,             // Leftward movement in pixels/second
+    spawnInterval: 0.65,   // Time between new constellations
+    mouseRadius: 180,      // Mouse connection distance
+    connectionDistance: 145,
+    maxMouseConnections: 9
+};
+
+let spawnTimer = 0;
+let lastTime = 0;
+
+
+/* CANVAS RESIZING */
 
 function resizeCanvas() {
-    canvas.width = window.innerWidth * devicePixelRatio;
-    canvas.height = window.innerHeight * devicePixelRatio;
 
-    ctx.setTransform(
-        devicePixelRatio, 0, 0,
-        devicePixelRatio, 0, 0
-    );
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
 
-    createStars();
+    width = window.innerWidth;
+    height = window.innerHeight;
+
+    canvas.width = width * ratio;
+    canvas.height = height * ratio;
+
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+    // Create an initial field of constellations.
+
+    if (constellations.length === 0) {
+
+        const amount = Math.ceil(width / 155);
+
+        for (let i = 0; i < amount; i++) {
+
+            createConstellation(
+                Math.random() * width,
+                Math.random() * height,
+                true
+            );
+
+        }
+
+    }
 }
 
-function createStars() {
-    stars = [];
-    connections = [];
 
-    const amount = Math.floor(
-        (window.innerWidth * window.innerHeight) / 8500
-    );
+/* CREATE A CONSTELLATION */
 
-    for (let i = 0; i < amount; i++) {
-        stars.push({
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
-            radius: Math.random() * 1.7 + 0.5,
-            opacity: Math.random() * 0.7 + 0.2,
-            twinkle: Math.random() * 0.02
+function createConstellation(x, y, initial = false) {
+
+    const starCount = Math.floor(Math.random() * 4) + 4;
+
+    const group = {
+        x: x,
+        y: y,
+        stars: [],
+        connections: [],
+        speed: SETTINGS.speed * (0.65 + Math.random() * 0.7)
+    };
+
+    // Generate stars around a central position.
+
+    for (let i = 0; i < starCount; i++) {
+
+        group.stars.push({
+
+            x: (Math.random() - 0.5) * 135,
+            y: (Math.random() - 0.5) * 135,
+
+            radius: Math.random() * 1.5 + 0.5,
+
+            opacity: Math.random() * 0.6 + 0.3,
+
+            twinkleSpeed: Math.random() * 0.8 + 0.3,
+
+            twinkleDirection: Math.random() > 0.5 ? 1 : -1
+
         });
+
     }
 
-    stars.forEach((star, i) => {
-        const nearby = stars
-            .map((other, index) => ({
-                index,
-                distance: Math.hypot(
-                    star.x - other.x,
-                    star.y - other.y
-                )
-            }))
-            .filter(item =>
-                item.index !== i &&
-                item.distance < 145
-            )
-            .sort((a, b) => a.distance - b.distance);
+    // Connect nearby stars to form a constellation.
 
-        if (nearby.length && Math.random() > 0.25) {
-            connections.push({
-                from: i,
-                to: nearby[Math.floor(
-                    Math.random() * Math.min(3, nearby.length)
-                )].index
-            });
+    for (let i = 0; i < starCount; i++) {
+
+        let nearest = [];
+
+        for (let j = 0; j < starCount; j++) {
+
+            if (i === j) continue;
+
+            const a = group.stars[i];
+            const b = group.stars[j];
+
+            const distance = Math.hypot(
+                a.x - b.x,
+                a.y - b.y
+            );
+
+            if (distance < SETTINGS.connectionDistance) {
+                nearest.push({
+                    index: j,
+                    distance: distance
+                });
+            }
+
         }
-    });
+
+        nearest.sort((a, b) => a.distance - b.distance);
+
+        const amount = Math.min(
+            nearest.length,
+            Math.random() > 0.5 ? 2 : 1
+        );
+
+        for (let j = 0; j < amount; j++) {
+
+            const target = nearest[j].index;
+
+            // Avoid duplicate connections.
+
+            const exists = group.connections.some(connection =>
+                (connection.from === i && connection.to === target) ||
+                (connection.from === target && connection.to === i)
+            );
+
+            if (!exists) {
+
+                group.connections.push({
+                    from: i,
+                    to: target
+                });
+
+            }
+
+        }
+
+    }
+
+    constellations.push(group);
 }
 
-function animateStars() {
-    ctx.clearRect(
-        0, 0, window.innerWidth, window.innerHeight
+
+/* GENERATE NEW CONSTELLATIONS */
+
+function spawnConstellation() {
+
+    const y = Math.random() * height;
+
+    // New groups enter from the right.
+
+    createConstellation(
+        width + 100,
+        y
     );
 
-    connections.forEach(connection => {
-        const a = stars[connection.from];
-        const b = stars[connection.to];
+}
 
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
 
-        ctx.strokeStyle = "rgba(135,140,255,0.17)";
-        ctx.lineWidth = 0.8;
-        ctx.stroke();
-    });
+/* DRAW A STAR */
 
-    stars.forEach(star => {
-        star.opacity += star.twinkle;
+function drawStar(x, y, star) {
 
-        if (star.opacity > 0.9 || star.opacity < 0.2) {
-            star.twinkle *= -1;
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y,
+        star.radius,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fillStyle =
+        `rgba(225,230,255,${star.opacity})`;
+
+    ctx.shadowBlur = 9;
+    ctx.shadowColor = "#9999ff";
+
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+
+}
+
+
+/* DRAW CONSTELLATIONS */
+
+function drawConstellation(group, delta) {
+
+    group.x -= group.speed * delta;
+
+    // Update twinkling stars.
+
+    group.stars.forEach(star => {
+
+        star.opacity +=
+            star.twinkleSpeed * delta *
+            star.twinkleDirection;
+
+        if (star.opacity > 0.95) {
+            star.opacity = 0.95;
+            star.twinkleDirection = -1;
         }
 
+        if (star.opacity < 0.2) {
+            star.opacity = 0.2;
+            star.twinkleDirection = 1;
+        }
+
+    });
+
+    // Draw connecting lines.
+
+    group.connections.forEach(connection => {
+
+        const a = group.stars[connection.from];
+        const b = group.stars[connection.to];
+
+        const ax = group.x + a.x;
+        const ay = group.y + a.y;
+
+        const bx = group.x + b.x;
+        const by = group.y + b.y;
+
         ctx.beginPath();
+
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(bx, by);
+
+        ctx.strokeStyle = "rgba(145,150,255,0.22)";
+        ctx.lineWidth = 0.8;
+
+        ctx.stroke();
+
+    });
+
+    // Draw stars.
+
+    group.stars.forEach(star => {
+
+        drawStar(
+            group.x + star.x,
+            group.y + star.y,
+            star
+        );
+
+    });
+
+}
+
+
+/* =================================
+   INTERACTIVE MOUSE CONSTELLATIONS
+================================= */
+
+// Track mouse movement anywhere on the screen.
+
+window.addEventListener("pointermove", function(event) {
+
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+
+    mouse.active = true;
+
+});
+
+window.addEventListener("pointerleave", function() {
+
+    mouse.active = false;
+
+});
+
+
+/* MOUSE CONNECTIONS */
+
+function drawMouseConnections() {
+
+    if (!mouse.active) return;
+
+    let nearbyStars = [];
+
+    // Find stars near the mouse.
+
+    constellations.forEach(group => {
+
+        group.stars.forEach(star => {
+
+            const x = group.x + star.x;
+            const y = group.y + star.y;
+
+            const distance = Math.hypot(
+                mouse.x - x,
+                mouse.y - y
+            );
+
+            if (distance < SETTINGS.mouseRadius) {
+
+                nearbyStars.push({
+                    x: x,
+                    y: y,
+                    distance: distance,
+                    opacity: star.opacity
+                });
+
+            }
+
+        });
+
+    });
+
+    // Closest stars connect first.
+
+    nearbyStars.sort((a, b) => a.distance - b.distance);
+
+    nearbyStars = nearbyStars.slice(
+        0,
+        SETTINGS.maxMouseConnections
+    );
+
+    // Connect stars directly to the mouse.
+
+    nearbyStars.forEach(star => {
+
+        const strength = 1 - (
+            star.distance / SETTINGS.mouseRadius
+        );
+
+        ctx.beginPath();
+
+        ctx.moveTo(mouse.x, mouse.y);
+        ctx.lineTo(star.x, star.y);
+
+        ctx.strokeStyle =
+            `rgba(155,165,255,${strength * 0.55})`;
+
+        ctx.lineWidth = 0.8 + strength * 0.7;
+
+        ctx.stroke();
+
+    });
+
+    // Connect nearby stars to each other when the mouse
+    // activates the surrounding constellation.
+
+    for (let i = 0; i < nearbyStars.length; i++) {
+
+        for (let j = i + 1; j < nearbyStars.length; j++) {
+
+            const a = nearbyStars[i];
+            const b = nearbyStars[j];
+
+            const distance = Math.hypot(
+                a.x - b.x,
+                a.y - b.y
+            );
+
+            if (distance < SETTINGS.connectionDistance) {
+
+                const strength = 1 - (
+                    distance / SETTINGS.connectionDistance
+                );
+
+                ctx.beginPath();
+
+                ctx.moveTo(a.x, a.y);
+                ctx.lineTo(b.x, b.y);
+
+                ctx.strokeStyle =
+                    `rgba(145,155,255,${strength * 0.35})`;
+
+                ctx.lineWidth = 0.7;
+
+                ctx.stroke();
+
+            }
+
+        }
+
+    }
+
+    // Make the mouse itself look like a glowing star.
+
+    if (nearbyStars.length > 0) {
+
+        ctx.beginPath();
+
         ctx.arc(
-            star.x,
-            star.y,
-            star.radius,
+            mouse.x,
+            mouse.y,
+            2,
             0,
             Math.PI * 2
         );
 
-        ctx.fillStyle =
-            `rgba(210,215,255,${star.opacity})`;
+        ctx.fillStyle = "rgba(210,215,255,0.9)";
 
-        ctx.shadowBlur = 7;
-        ctx.shadowColor = "#9999ff";
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = "#aaaaff";
+
         ctx.fill();
+
         ctx.shadowBlur = 0;
-    });
+
+    }
+
+}
+
+
+/* =================================
+   MAIN ANIMATION LOOP
+================================= */
+
+function animateStars(timestamp) {
 
     requestAnimationFrame(animateStars);
+
+    // Calculate time between frames.
+
+    if (!lastTime) lastTime = timestamp;
+
+    const delta = Math.min(
+        (timestamp - lastTime) / 1000,
+        0.05
+    );
+
+    lastTime = timestamp;
+
+    ctx.clearRect(0, 0, width, height);
+
+    // Continuously generate new constellations.
+
+    spawnTimer += delta;
+
+    if (spawnTimer >= SETTINGS.spawnInterval) {
+
+        spawnTimer = 0;
+
+        spawnConstellation();
+
+    }
+
+    // Draw and move every constellation.
+
+    constellations.forEach(group => {
+
+        drawConstellation(group, delta);
+
+    });
+
+    // Remove constellations that have left the screen.
+
+    constellations = constellations.filter(group => {
+
+        return group.x > -180;
+
+    });
+
+    // Mouse interaction is drawn over the stars.
+
+    drawMouseConnections();
+
 }
+
+
+/* =================================
+   START NEBULA
+================================= */
 
 window.addEventListener("resize", resizeCanvas);
 
 resizeCanvas();
-animateStars();
 
-/* Start browser */
+requestAnimationFrame(animateStars);
 
-addTab();
+newTab();
 
 </script>
 
