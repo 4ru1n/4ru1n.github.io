@@ -2,86 +2,596 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Planner - ProgressBook</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planner - ProgressBook</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #080910;
+    color: white;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+/* Background */
+#stars {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Browser tabs */
+.tab-bar {
+    height: 48px;
+    width: 100%;
+    background: #10111b;
+    display: flex;
+    align-items: center;
+    padding: 7px 10px;
+    gap: 7px;
+    position: relative;
+    z-index: 10;
+    border-bottom: 1px solid #222331;
+}
+
+.tabs {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 100%;
+    overflow-x: auto;
+    flex: 1;
+}
+
+.tab {
+    height: 34px;
+    min-width: 130px;
+    max-width: 220px;
+    background: #191a27;
+    border-radius: 9px 9px 0 0;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 8px;
+    cursor: pointer;
+    color: #aaaabb;
+    font-size: 12px;
+    flex: 1;
+}
+
+.tab.active {
+    background: #080910;
+    color: white;
+}
+
+.tab-name {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.close-tab {
+    border: none;
+    background: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+.close-tab:hover {
+    color: white;
+}
+
+.new-tab {
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 23px;
+    cursor: pointer;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+}
+
+.new-tab:hover {
+    background: #292a3a;
+}
+
+/* Navigation bar */
+.navigation {
+    height: 42px;
+    background: #080910;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    gap: 12px;
+    position: relative;
+    z-index: 5;
+}
+
+.nav-btn {
+    border: none;
+    background: transparent;
+    color: #999;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.nav-btn:hover {
+    color: white;
+}
+
+.address {
+    flex: 1;
+    height: 30px;
+    background: #171824;
+    border: 1px solid #292a39;
+    border-radius: 20px;
+    color: white;
+    padding: 0 15px;
+    outline: none;
+    font-size: 12px;
+}
+
+.address:focus {
+    border-color: #6666a8;
+}
+
+/* Main content */
+main {
+    position: absolute;
+    top: 90px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 90px);
+    z-index: 1;
+}
+
+.homepage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-bottom: 65px;
+}
+
+.logo {
+    font-size: 65px;
+    font-weight: 700;
+    letter-spacing: -3px;
+    color: #fff;
+    margin-bottom: 30px;
+    text-shadow: 0 0 30px #7777ff33;
+}
+
+.search-box {
+    width: min(550px, 85%);
+    height: 58px;
+    background: rgba(25, 26, 40, 0.88);
+    border: 1px solid #38394c;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    padding: 0 19px;
+    gap: 13px;
+    transition: 0.2s;
+    backdrop-filter: blur(10px);
+}
+
+.search-box:focus-within {
+    border-color: #7777bb;
+    box-shadow: 0 0 25px #7777bb22;
+}
+
+.search-icon {
+    font-size: 23px;
+    color: #85859d;
+}
+
+.search-box input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 15px;
+    width: 100%;
+}
+
+.search-box input::placeholder {
+    color: #85859b;
+}
+
+.hint {
+    color: #77778a;
+    font-size: 11px;
+    margin-top: 17px;
+}
+
+/* Iframes */
+.browser-frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: white;
+    display: none;
+}
+
+.browser-frame.active {
+    display: block;
+}
+
+.hidden {
+    display: none !important;
+}
+</style>
 </head>
+
 <body>
 
-  <nav class="top-nav">
-    <div class="nav-left">
-      <a href="#">About</a>
-      <a href="#">Privacy</a>
+<canvas id="stars"></canvas>
+
+<!-- Tabs -->
+<div class="tab-bar">
+    <div class="tabs" id="tabs"></div>
+    <button class="new-tab" onclick="addTab()" title="New tab">+</button>
+</div>
+
+<!-- Navigation -->
+<div class="navigation">
+    <button class="nav-btn" onclick="goBack()" title="Back">‹</button>
+    <button class="nav-btn" onclick="goForward()" title="Forward">›</button>
+    <button class="nav-btn" onclick="reloadPage()" title="Reload">⟳</button>
+    <input class="address" id="address" placeholder="Search or enter website address"
+        onkeydown="if(event.key==='Enter') navigate(this.value)">
+</div>
+
+<main id="main">
+
+    <!-- Homepage -->
+    <div class="homepage" id="homepage">
+        <div class="logo">Nebula</div>
+
+        <div class="search-box">
+            <span class="search-icon">⌕</span>
+            <input
+                id="search"
+                type="text"
+                placeholder="example.com"
+                autocomplete="off"
+                onkeydown="if(event.key==='Enter') navigate(this.value)"
+            >
+        </div>
+
+        <div class="hint">Explore beyond the stars.</div>
     </div>
 
-    <div class="nav-right">
-      <a href="#">Settings</a>
-      <div class="profile">M</div>
-    </div>
-  </nav>
+</main>
 
-  <main>
-    <div class="logo">
-      <span class="blue">M</span><span class="red">y</span><span class="yellow">P</span><span class="blue">r</span><span class="green">o</span><span class="red">x</span><span class="blue">y</span>
-    </div>
+<script>
 
-    <p class="subtitle">A simpler way to explore the web.</p>
+/* Browser system */
 
-    <form id="searchForm">
-      <div class="search-box">
-        <span class="search-icon">⌕</span>
-        <input
-          type="text"
-          id="url"
-          placeholder="Search or enter a website URL"
-          autocomplete="off"
-          required
-        >
-        <button type="submit" aria-label="Search">➜</button>
-      </div>
-    </form>
+let tabs = [];
+let activeTab = null;
+let nextId = 0;
 
-    <div class="shortcuts" id="shortcuts">
-      <div class="shortcut" data-url="https://www.google.com">
-        <div class="shortcut-icon google">G</div>
-        <span>Google</span>
-      </div>
+const tabsContainer = document.getElementById("tabs");
+const main = document.getElementById("main");
+const address = document.getElementById("address");
+const homepage = document.getElementById("homepage");
 
-      <div class="shortcut" data-url="https://www.youtube.com">
-        <div class="shortcut-icon youtube">▶</div>
-        <span>YouTube</span>
-      </div>
+function addTab() {
+    const id = nextId++;
 
-      <div class="shortcut" data-url="https://www.wikipedia.org">
-        <div class="shortcut-icon wiki">W</div>
-        <span>Wikipedia</span>
-      </div>
+    const tab = {
+        id,
+        name: "New Tab",
+        url: "",
+        history: [],
+        historyIndex: -1,
+        iframe: null
+    };
 
-      <div class="shortcut" data-url="https://www.reddit.com">
-        <div class="shortcut-icon reddit">r</div>
-        <span>Reddit</span>
-      </div>
+    tabs.push(tab);
 
-      <div class="shortcut" data-url="https://www.instagram.com">
-        <div class="shortcut-icon instagram">◎</div>
-        <span>Instagram</span>
-      </div>
+    const iframe = document.createElement("iframe");
+    iframe.className = "browser-frame";
+    iframe.dataset.id = id;
+    iframe.style.display = "none";
 
-      <div class="shortcut" data-url="https://www.tiktok.com">
-        <div class="shortcut-icon tiktok">♪</div>
-        <span>TikTok</span>
-      </div>
-    </div>
+    main.appendChild(iframe);
+    tab.iframe = iframe;
 
-    <div id="message"></div>
-  </main>
+    const element = document.createElement("div");
+    element.className = "tab";
+    element.dataset.id = id;
 
-  <footer>
-    <span>MyProxy</span>
-    <span>Explore the web your way.</span>
-  </footer>
+    element.innerHTML = `
+        <span style="color:#888">✦</span>
+        <span class="tab-name">New Tab</span>
+        <button class="close-tab" title="Close tab">×</button>
+    `;
 
-  <script src="script.js"></script>
+    element.addEventListener("click", (e) => {
+        if (e.target.classList.contains("close-tab")) {
+            e.stopPropagation();
+            closeTab(id);
+        } else {
+            switchTab(id);
+        }
+    });
+
+    tabsContainer.appendChild(element);
+
+    switchTab(id);
+}
+
+function switchTab(id) {
+    activeTab = id;
+
+    tabs.forEach(tab => {
+        const selected = tab.id === id;
+
+        tab.iframe.style.display = selected ? "block" : "none";
+
+        const element = tabsContainer.querySelector(
+            `[data-id="${tab.id}"]`
+        );
+
+        element.classList.toggle("active", selected);
+    });
+
+    const tab = getActiveTab();
+
+    homepage.classList.toggle("hidden", !!tab.url);
+    address.value = tab.url || "";
+
+    if (!tab.url) {
+        address.placeholder = "Search or enter website address";
+    }
+}
+
+function getActiveTab() {
+    return tabs.find(tab => tab.id === activeTab);
+}
+
+function closeTab(id) {
+    const index = tabs.findIndex(tab => tab.id === id);
+    if (index === -1) return;
+
+    const tab = tabs[index];
+
+    tab.iframe.remove();
+
+    tabsContainer.querySelector(
+        `[data-id="${id}"]`
+    ).remove();
+
+    tabs.splice(index, 1);
+
+    if (tabs.length === 0) {
+        addTab();
+    } else if (activeTab === id) {
+        const newIndex = Math.max(0, index - 1);
+        switchTab(tabs[newIndex].id);
+    }
+}
+
+/* Navigation */
+
+function normalizeURL(value) {
+    value = value.trim();
+
+    if (!value) return null;
+
+    if (/^https?:\/\//i.test(value)) {
+        return value;
+    }
+
+    if (/^[^\s]+\.[^\s]+$/.test(value)) {
+        return "https://" + value;
+    }
+
+    return "https://www.google.com/search?q=" +
+        encodeURIComponent(value);
+}
+
+function navigate(value) {
+    const url = normalizeURL(value);
+    if (!url) return;
+
+    const tab = getActiveTab();
+
+    tab.url = url;
+    tab.name = url.replace(/^https?:\/\//, "").split("/")[0];
+
+    tab.history = tab.history.slice(0, tab.historyIndex + 1);
+    tab.history.push(url);
+    tab.historyIndex++;
+
+    tab.iframe.src = url;
+
+    const element = tabsContainer.querySelector(
+        `[data-id="${tab.id}"]`
+    );
+
+    element.querySelector(".tab-name").textContent = tab.name;
+
+    switchTab(tab.id);
+}
+
+function goBack() {
+    const tab = getActiveTab();
+
+    if (tab.historyIndex > 0) {
+        tab.historyIndex--;
+        const url = tab.history[tab.historyIndex];
+        tab.url = url;
+        tab.iframe.src = url;
+        address.value = url;
+    } else {
+        try { tab.iframe.contentWindow.history.back(); } catch(e) {}
+    }
+}
+
+function goForward() {
+    const tab = getActiveTab();
+
+    if (tab.historyIndex < tab.history.length - 1) {
+        tab.historyIndex++;
+        const url = tab.history[tab.historyIndex];
+        tab.url = url;
+        tab.iframe.src = url;
+        address.value = url;
+    } else {
+        try { tab.iframe.contentWindow.history.forward(); } catch(e) {}
+    }
+}
+
+function reloadPage() {
+    const tab = getActiveTab();
+
+    if (tab.url) {
+        tab.iframe.src = tab.url;
+    }
+}
+
+/* Constellation background */
+
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+
+let stars = [];
+let connections = [];
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth * devicePixelRatio;
+    canvas.height = window.innerHeight * devicePixelRatio;
+
+    ctx.setTransform(
+        devicePixelRatio, 0, 0,
+        devicePixelRatio, 0, 0
+    );
+
+    createStars();
+}
+
+function createStars() {
+    stars = [];
+    connections = [];
+
+    const amount = Math.floor(
+        (window.innerWidth * window.innerHeight) / 8500
+    );
+
+    for (let i = 0; i < amount; i++) {
+        stars.push({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            radius: Math.random() * 1.7 + 0.5,
+            opacity: Math.random() * 0.7 + 0.2,
+            twinkle: Math.random() * 0.02
+        });
+    }
+
+    stars.forEach((star, i) => {
+        const nearby = stars
+            .map((other, index) => ({
+                index,
+                distance: Math.hypot(
+                    star.x - other.x,
+                    star.y - other.y
+                )
+            }))
+            .filter(item =>
+                item.index !== i &&
+                item.distance < 145
+            )
+            .sort((a, b) => a.distance - b.distance);
+
+        if (nearby.length && Math.random() > 0.25) {
+            connections.push({
+                from: i,
+                to: nearby[Math.floor(
+                    Math.random() * Math.min(3, nearby.length)
+                )].index
+            });
+        }
+    });
+}
+
+function animateStars() {
+    ctx.clearRect(
+        0, 0, window.innerWidth, window.innerHeight
+    );
+
+    connections.forEach(connection => {
+        const a = stars[connection.from];
+        const b = stars[connection.to];
+
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+
+        ctx.strokeStyle = "rgba(135,140,255,0.17)";
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+    });
+
+    stars.forEach(star => {
+        star.opacity += star.twinkle;
+
+        if (star.opacity > 0.9 || star.opacity < 0.2) {
+            star.twinkle *= -1;
+        }
+
+        ctx.beginPath();
+        ctx.arc(
+            star.x,
+            star.y,
+            star.radius,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            `rgba(210,215,255,${star.opacity})`;
+
+        ctx.shadowBlur = 7;
+        ctx.shadowColor = "#9999ff";
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    });
+
+    requestAnimationFrame(animateStars);
+}
+
+window.addEventListener("resize", resizeCanvas);
+
+resizeCanvas();
+animateStars();
+
+/* Start browser */
+
+addTab();
+
+</script>
+
 </body>
 </html>
