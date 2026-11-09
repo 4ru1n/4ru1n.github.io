@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nebula</title>
+<title>Home - Classroom</title>
 
 <style>
 * {
@@ -21,65 +21,73 @@ body {
     overflow: hidden;
 }
 
-/* CONSTELLATION BACKGROUND */
-
 #stars {
     position: fixed;
     inset: 0;
     width: 100%;
     height: 100%;
-    z-index: 0;
     pointer-events: none;
 }
 
-/* BROWSER */
-
 .browser {
     position: relative;
-    z-index: 10;
+    z-index: 2;
 }
 
-.tab-bar {
-    height: 45px;
-    background: #11121b;
+/* TAB BAR */
+
+.tabbar {
+    height: 43px;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     padding: 5px 10px 0;
+    background: #090a12;
+    border-bottom: 1px solid #242535;
     gap: 7px;
 }
 
-.tabs {
+.tab-list {
     display: flex;
-    align-items: flex-end;
-    height: 100%;
+    align-items: center;
     gap: 5px;
-    flex: 1;
     overflow-x: auto;
+    scrollbar-width: none;
+    min-width: 0;
 }
 
-.tabs::-webkit-scrollbar {
+.tab-list::-webkit-scrollbar {
     display: none;
 }
 
 .tab {
-    height: 35px;
-    min-width: 130px;
-    max-width: 220px;
-    flex: 1;
-    background: #1b1c28;
-    border-radius: 9px 9px 0 0;
+    height: 33px;
+    width: 175px;
+    min-width: 100px;
+    max-width: 210px;
     display: flex;
     align-items: center;
     gap: 9px;
-    padding: 0 12px;
-    color: #aaa;
+    padding: 0 11px;
+    background: #141521;
+    border: 1px solid #292a3b;
+    border-bottom: none;
+    border-radius: 9px 9px 0 0;
+    color: #999bad;
     cursor: pointer;
     font-size: 12px;
+    flex-shrink: 0;
+    transition: background .15s;
+}
+
+.tab:hover {
+    background: #1b1c2a;
+    color: white;
 }
 
 .tab.active {
-    background: #070810;
+    background: #202130;
     color: white;
+    border-color: #393a4d;
 }
 
 .tab-title {
@@ -90,49 +98,61 @@ body {
 }
 
 .tab-close {
-    background: transparent;
     border: none;
-    color: #999;
-    font-size: 18px;
+    background: transparent;
+    color: #9293a5;
+    font-size: 17px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .tab-close:hover {
+    background: #38394b;
     color: white;
 }
 
-.add-tab {
-    width: 34px;
-    height: 34px;
+.new-tab {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
     border: none;
-    border-radius: 7px;
+    border-radius: 8px;
     background: transparent;
-    color: white;
-    font-size: 24px;
+    color: #aaa;
+    font-size: 23px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.add-tab:hover {
-    background: #292a39;
+.new-tab:hover {
+    background: #242536;
+    color: white;
 }
 
 /* NAVIGATION */
 
 .navigation {
-    height: 43px;
+    height: 52px;
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 0 13px;
-    background: #080910;
-    border-bottom: 1px solid #242532;
+    gap: 12px;
+    padding: 0 15px;
+    background: #10111b;
+    border-bottom: 1px solid #282939;
 }
 
 .nav-button {
-    background: transparent;
     border: none;
-    color: #999;
-    font-size: 22px;
+    background: transparent;
+    color: #bbb;
+    font-size: 23px;
     cursor: pointer;
 }
 
@@ -142,83 +162,56 @@ body {
 
 .address {
     flex: 1;
-    height: 30px;
+    height: 33px;
+    background: #202130;
+    border: 1px solid #393a4d;
     border-radius: 20px;
-    background: #191a26;
-    border: 1px solid #303143;
     color: white;
-    padding: 0 14px;
+    padding: 0 15px;
     outline: none;
-    font-size: 12px;
 }
 
 .address:focus {
-    border-color: #8585bd;
+    border-color: #7779c5;
 }
 
-/* MAIN */
+/* PAGE CONTENT */
 
 main {
     position: absolute;
-    top: 88px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
+    inset: 95px 0 0;
 }
-
-/* HOMEPAGE */
 
 .homepage {
     position: absolute;
     inset: 0;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-bottom: 50px;
-    background: transparent;
+    flex-direction: column;
+    gap: 28px;
 }
 
 .logo {
-    font-size: 68px;
-    font-weight: 700;
-    letter-spacing: -3px;
-    color: white;
-    margin-bottom: 30px;
-    user-select: none;
-    text-shadow: 0 0 35px rgba(150,150,255,0.15);
+    font-size: 70px;
+    letter-spacing: -4px;
+    font-weight: bold;
+    text-shadow: 0 0 35px #7777bd55;
 }
-
-/* SEARCH BOX */
 
 .search-box {
     width: min(550px, 85%);
-    height: 60px;
+    height: 58px;
+    background: #191a28;
+    border: 1px solid #48495d;
+    border-radius: 15px;
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 0 20px;
-    border-radius: 16px;
-    background: rgba(24,25,38,0.88);
-    border: 1px solid #48495d;
-    backdrop-filter: blur(12px);
-    transition: 0.2s;
+    padding: 0 18px;
 }
 
-.search-box:focus-within {
-    border-color: #9999d5;
-    box-shadow: 0 0 25px rgba(130,130,255,0.13);
-}
-
-.search-icon {
-    display: flex;
-    color: #c4c4d2;
-}
-
-.search-input {
+.search-box input {
     flex: 1;
-    width: 100%;
     background: transparent;
     border: none;
     outline: none;
@@ -226,85 +219,40 @@ main {
     font-size: 16px;
 }
 
-.search-input::placeholder {
-    color: #c0c0cc;
-    opacity: 1;
-}
-
-/* WEBSITE FRAME */
-
-.page-frame {
+.viewer {
+    display: none;
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     border: none;
     background: white;
-    display: none;
 }
 
-.page-frame.active {
-    display: block;
-}
-
-/* LOADING AND ERROR MESSAGE */
-
-.page-status {
+#status {
     position: absolute;
-    inset: 0;
-    z-index: 5;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 14px;
-    background: rgba(7,8,16,0.96);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #aaa;
     text-align: center;
-    padding: 25px;
+    width: 90%;
+    z-index: 3;
+    font-size: 14px;
 }
 
-.page-status.visible {
-    display: flex;
-}
-
-.status-title {
-    font-size: 22px;
-    font-weight: bold;
-}
-
-.status-message {
-    color: #aaaabd;
-    font-size: 13px;
-    max-width: 400px;
-    line-height: 1.6;
-}
-
-.spinner {
-    width: 32px;
-    height: 32px;
-    border: 3px solid #303143;
-    border-top-color: #aaaaff;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
+@media (max-width: 600px) {
+    .tab {
+        width: 130px;
     }
-}
 
-@media(max-width: 600px) {
+    .navigation {
+        gap: 8px;
+        padding: 0 9px;
+    }
+
     .logo {
         font-size: 55px;
-    }
-
-    .search-box {
-        width: 90%;
-    }
-
-    .tab {
-        min-width: 110px;
     }
 }
 </style>
@@ -316,578 +264,380 @@ main {
 
 <div class="browser">
 
-    <div class="tab-bar">
-        <div class="tabs" id="tabs"></div>
-        <button class="add-tab" onclick="newTab()">+</button>
+    <!-- TABS -->
+    <div class="tabbar">
+        <div class="tab-list" id="tabList"></div>
+        <button class="new-tab" onclick="createTab()" title="New tab">+</button>
     </div>
 
+    <!-- NAVIGATION -->
     <div class="navigation">
-        <button class="nav-button" onclick="goBack()">‹</button>
-        <button class="nav-button" onclick="goForward()">›</button>
-        <button class="nav-button" onclick="reloadPage()">⟳</button>
+        <button class="nav-button" onclick="back()" title="Back">‹</button>
+        <button class="nav-button" onclick="forward()" title="Forward">›</button>
+        <button class="nav-button" onclick="reload()" title="Reload">⟳</button>
 
         <input
-            class="address"
             id="address"
-            placeholder="Search or enter website address"
-            onkeydown="if(event.key==='Enter') navigate(this.value)"
+            class="address"
+            placeholder="Search or enter website"
+            onkeydown="if(event.key==='Enter')navigate()"
         >
     </div>
 
 </div>
 
-<main id="main">
+<main>
 
-    <div class="homepage" id="homepage">
-
+    <section class="homepage" id="homepage">
         <div class="logo">Nebula</div>
 
         <div class="search-box">
-
-            <span class="search-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round">
-                    <circle cx="10.8" cy="10.8" r="7.2"/>
-                    <path d="m16 16 5 5"/>
-                </svg>
-            </span>
-
             <input
-                class="search-input"
                 id="search"
-                placeholder="example.com"
-                autocomplete="off"
-                onkeydown="if(event.key==='Enter') navigate(this.value)"
+                placeholder="Search or enter website"
+                onkeydown="if(event.key==='Enter')navigate()"
             >
-
         </div>
+    </section>
 
-    </div>
+    <div id="status"></div>
+
+    <div id="viewerContainer"></div>
 
 </main>
 
 <script>
 
-/* =================================
-   NEBULA DNS CONFIGURATION
-================================= */
+/* BACKEND */
 
-const DNS_API =
-"https://script.google.com/a/macros/jalsd.org/s/AKfycbyplxSHAclmrP6seW0G9-6DOYVmjyfgBskkLkjJYf-Lu-IjPsLM2BRTsh0PYaM9ZxqIwQ/exec";
+const BACKEND =
+"https://script.google.com/a/macros/jalsd.org/s/AKfycbz37a4hKs-7E-qS50iZLZf4CuD_BMimNh0xuWr_H6wFDcaxa3WmfeFcFXI6vetRVjSzmQ/exec";
 
 
-/* =================================
-   BROWSER SYSTEM
-================================= */
+/* TAB SYSTEM */
 
 let tabs = [];
-let activeTab = null;
-let tabCounter = 0;
+let activeTabId = null;
+let nextTabId = 1;
 
-const tabsElement = document.getElementById("tabs");
-const homepage = document.getElementById("homepage");
-const address = document.getElementById("address");
-const main = document.getElementById("main");
+function getActiveTab() {
+    return tabs.find(tab => tab.id === activeTabId);
+}
 
-function newTab() {
+function createTab() {
+    const id = nextTabId++;
 
-    const id = tabCounter++;
+    const frame = document.createElement("iframe");
+    frame.className = "viewer";
+    frame.setAttribute("sandbox", "");
+    frame.setAttribute("referrerpolicy", "no-referrer");
+
+    document.getElementById("viewerContainer").appendChild(frame);
 
     const tab = {
         id,
-        title: "Nebula",
+        title: "New Tab",
         url: "",
-        pendingURL: "",
+        html: "",
         history: [],
         historyIndex: -1,
-        iframe: null,
-        element: null,
-        status: null,
         loading: false,
-        error: false,
-        requestId: 0
+        error: "",
+        requestId: 0,
+        frame
     };
-
-    const iframe = document.createElement("iframe");
-    iframe.className = "page-frame";
-    iframe.dataset.id = id;
-
-    main.appendChild(iframe);
-    tab.iframe = iframe;
-
-    const status = document.createElement("div");
-    status.className = "page-status";
-
-    status.innerHTML = `
-        <div class="spinner"></div>
-        <div class="status-title">Connecting to Nebula</div>
-        <div class="status-message">
-            Checking the website's DNS records...
-        </div>
-    `;
-
-    main.appendChild(status);
-    tab.status = status;
-
-    const element = document.createElement("div");
-    element.className = "tab";
-
-    element.innerHTML = `
-        <span style="color:#aaa">✦</span>
-        <span class="tab-title">Nebula</span>
-        <button class="tab-close">×</button>
-    `;
-
-    element.addEventListener("click", function(e) {
-
-        if (e.target.classList.contains("tab-close")) {
-            e.stopPropagation();
-            closeTab(id);
-        } else {
-            switchTab(id);
-        }
-
-    });
-
-    tabsElement.appendChild(element);
-    tab.element = element;
 
     tabs.push(tab);
 
     switchTab(id);
-}
+    renderTabs();
 
-function getActiveTab() {
-    return tabs.find(t => t.id === activeTab);
+    return tab;
 }
 
 function switchTab(id) {
-
-    activeTab = id;
-
-    tabs.forEach(tab => {
-
-        const selected = tab.id === id;
-
-        tab.element.classList.toggle("active", selected);
-
-        tab.iframe.classList.toggle(
-            "active",
-            selected && !!tab.url
-        );
-
-        tab.status.classList.toggle(
-            "visible",
-            selected && (tab.loading || tab.error)
-        );
-
-    });
+    activeTabId = id;
 
     const tab = getActiveTab();
 
-    homepage.style.display =
-        (!tab.url && !tab.loading && !tab.error)
-        ? "flex"
-        : "none";
+    if (!tab) return;
 
-    address.value = tab.pendingURL || tab.url || "";
+    tabs.forEach(t => {
+        t.frame.style.display =
+            t.id === id && t.html ? "block" : "none";
+    });
 
-    if (!tab.url && !tab.pendingURL) {
-        document.getElementById("search").value = "";
-    }
+    document.getElementById("address").value = tab.url || "";
+
+    document.getElementById("homepage").style.display =
+        tab.html ? "none" : "flex";
+
+    document.getElementById("status").textContent =
+        tab.loading ? "Nebula is retrieving the website..." :
+        tab.error ? tab.error : "";
+
+    document.getElementById("search").value = "";
+
+    document.title = tab.title + " - Nebula";
+
+    renderTabs();
 }
 
-function closeTab(id) {
+function closeTab(id, event) {
+    if (event) event.stopPropagation();
 
-    const index = tabs.findIndex(t => t.id === id);
+    const index = tabs.findIndex(tab => tab.id === id);
 
     if (index === -1) return;
 
-    const tab = tabs[index];
+    const wasActive = activeTabId === id;
 
-    tab.requestId++;
-
-    tab.iframe.remove();
-    tab.status.remove();
-    tab.element.remove();
-
+    tabs[index].frame.remove();
     tabs.splice(index, 1);
 
     if (tabs.length === 0) {
-        newTab();
-    } else if (activeTab === id) {
-        switchTab(tabs[Math.max(0, index - 1)].id);
+        createTab();
+        return;
     }
+
+    if (wasActive) {
+        const next = tabs[Math.max(0, index - 1)];
+        switchTab(next.id);
+    }
+
+    renderTabs();
+}
+
+function renderTabs() {
+    const container = document.getElementById("tabList");
+
+    container.innerHTML = "";
+
+    tabs.forEach(tab => {
+        const element = document.createElement("div");
+
+        element.className =
+            "tab" + (tab.id === activeTabId ? " active" : "");
+
+        element.onclick = () => switchTab(tab.id);
+
+        const title = document.createElement("span");
+        title.className = "tab-title";
+        title.textContent = tab.title;
+
+        const close = document.createElement("button");
+        close.className = "tab-close";
+        close.textContent = "×";
+        close.title = "Close tab";
+        close.onclick = event => closeTab(tab.id, event);
+
+        element.appendChild(title);
+        element.appendChild(close);
+
+        container.appendChild(element);
+    });
 }
 
 
-/* =================================
-   URL FORMATTING
-================================= */
+/* URL HANDLING */
 
-function formatURL(value) {
-
+function normalizeURL(value) {
     value = value.trim();
 
-    if (!value) return null;
-
-    // Explicit HTTP is not accepted.
+    if (!value) {
+        throw new Error("Enter a website.");
+    }
 
     if (/^http:\/\//i.test(value)) {
-        throw new Error("Please use an HTTPS website.");
+        throw new Error("Please use HTTPS.");
     }
 
-    // Explicit HTTPS URL.
-
-    if (/^https:\/\//i.test(value)) {
-
-        const url = new URL(value);
-
-        if (url.protocol !== "https:") {
-            throw new Error("Only HTTPS websites are supported.");
-        }
-
-        if (url.port && url.port !== "443") {
-            throw new Error("Only standard HTTPS ports are supported.");
-        }
-
-        return url.href;
+    if (!/^https:\/\//i.test(value)) {
+        value = "https://" + value;
     }
 
-    // Website address without protocol.
+    const parsed = new URL(value);
 
-    if (/^[^\s]+\.[^\s]+$/.test(value)) {
-        return "https://" + value;
+    if (!parsed.hostname || !parsed.hostname.includes(".")) {
+        throw new Error("Please enter a valid website address.");
     }
 
-    // Otherwise search Google.
-
-    return "https://www.google.com/search?q=" +
-        encodeURIComponent(value);
+    return parsed.href;
 }
 
 
-/* =================================
-   CLOUDFLARE DNS CHECK
-================================= */
+/* BACKEND REQUEST */
 
-function checkWebsiteDNS(domain) {
-
+function requestPage(url) {
     return new Promise((resolve, reject) => {
 
-        const callbackName =
-            "nebulaDNS_" +
-            Date.now() +
-            "_" +
-            Math.floor(Math.random() * 1000000);
+        const callback =
+            "nebulaCallback" + Date.now() +
+            Math.floor(Math.random() * 100000);
 
         const script = document.createElement("script");
 
         const params = new URLSearchParams({
-            domain: domain,
-            callback: callbackName
+            url,
+            callback
         });
 
-        script.src = DNS_API + "?" + params.toString();
-
-        let finished = false;
+        const timeout = setTimeout(() => {
+            cleanup();
+            reject(new Error("Request timed out."));
+        }, 30000);
 
         function cleanup() {
-
-            if (finished) return;
-
-            finished = true;
-
             clearTimeout(timeout);
-
             script.remove();
-
-            try {
-                delete window[callbackName];
-            } catch(e) {
-                window[callbackName] = undefined;
-            }
-
+            delete window[callback];
         }
 
-        const timeout = setTimeout(() => {
-
+        window[callback] = result => {
             cleanup();
 
-            reject(new Error(
-                "DNS verification timed out. Please try again."
-            ));
-
-        }, 15000);
-
-        window[callbackName] = function(result) {
-
-            if (finished) return;
-
-            cleanup();
-
-            if (!result || !result.success) {
-
-                reject(new Error(
-                    result?.error || "DNS verification failed."
-                ));
-
-                return;
+            if (!result.success) {
+                reject(new Error(result.error));
+            } else {
+                resolve(result);
             }
-
-            if (!result.safeForFetching) {
-
-                reject(new Error(
-                    "This domain did not pass the preliminary DNS safety check."
-                ));
-
-                return;
-            }
-
-            resolve(result);
-
         };
 
-        script.onerror = function() {
-
+        script.onerror = () => {
             cleanup();
-
-            reject(new Error(
-                "Could not connect to the DNS verification service."
-            ));
-
+            reject(new Error("Backend connection failed."));
         };
+
+        script.src = BACKEND + "?" + params.toString();
 
         document.head.appendChild(script);
-
     });
-
 }
 
 
-/* =================================
-   LOAD WEBSITE AFTER DNS CHECK
-================================= */
+/* NAVIGATION */
 
-async function checkAndLoad(tab, url, action = {}) {
+async function navigate(value) {
+    const tab = getActiveTab();
 
     if (!tab) return;
 
-    const requestId = ++tab.requestId;
+    const input = value ||
+        document.getElementById("address").value ||
+        document.getElementById("search").value;
 
-    let parsed;
+    let url;
 
     try {
-        parsed = new URL(url);
-    } catch(e) {
-
-        tab.error = true;
-        tab.loading = false;
-
-        tab.status.querySelector(".status-title").textContent =
-            "Invalid website";
-
-        tab.status.querySelector(".status-message").textContent =
-            "Please enter a valid website address.";
-
-        switchTab(tab.id);
+        url = normalizeURL(input);
+    } catch(error) {
+        tab.error = error.message;
+        updateActiveView();
         return;
     }
 
-    if (parsed.protocol !== "https:") {
+    await loadURL(tab, url, true);
+}
 
-        tab.error = true;
-        tab.loading = false;
+async function loadURL(tab, url, addHistory) {
 
-        tab.status.querySelector(".status-title").textContent =
-            "HTTPS required";
-
-        tab.status.querySelector(".status-message").textContent =
-            "Nebula only accepts HTTPS websites.";
-
-        switchTab(tab.id);
-        return;
-    }
-
-    if (parsed.port && parsed.port !== "443") {
-
-        tab.error = true;
-        tab.loading = false;
-
-        tab.status.querySelector(".status-title").textContent =
-            "Unsupported port";
-
-        tab.status.querySelector(".status-message").textContent =
-            "Only standard HTTPS ports are supported.";
-
-        switchTab(tab.id);
-        return;
-    }
-
-    const domain = parsed.hostname;
+    const id = ++tab.requestId;
 
     tab.loading = true;
-    tab.error = false;
-    tab.pendingURL = url;
+    tab.error = "";
+    tab.html = "";
 
-    tab.status.querySelector(".spinner").style.display = "block";
-
-    tab.status.querySelector(".status-title").textContent =
-        "Checking website";
-
-    tab.status.querySelector(".status-message").textContent =
-        "Checking " + domain + " through Cloudflare DNS...";
-
-    switchTab(tab.id);
+    if (tab.id === activeTabId) {
+        updateActiveView();
+    }
 
     try {
+        const result = await requestPage(url);
 
-        // Ask Apps Script to verify the domain.
+        if (id !== tab.requestId) return;
 
-        const dnsResult = await checkWebsiteDNS(domain);
+        if (!tabs.includes(tab)) return;
 
-        // Ignore old requests if another navigation started.
+        tab.url = result.url;
+        tab.title = result.title || "Nebula";
+        tab.html = result.html;
 
-        if (
-            requestId !== tab.requestId ||
-            !tabs.includes(tab)
-        ) {
-            return;
-        }
-
-        if (!dnsResult.safeForFetching) {
-            throw new Error("DNS safety check failed.");
-        }
-
-        // DNS passed. Now attempt direct browser navigation.
-
-        tab.loading = false;
-        tab.error = false;
-        tab.pendingURL = "";
-
-        if (action.type === "push") {
-
+        if (addHistory) {
             tab.history = tab.history.slice(
                 0,
                 tab.historyIndex + 1
             );
 
-            tab.history.push(url);
+            tab.history.push(tab.url);
             tab.historyIndex++;
-
-        } else if (action.type === "move") {
-
-            tab.historyIndex = action.index;
-
+        } else if (tab.historyIndex >= 0) {
+            tab.history[tab.historyIndex] = tab.url;
         }
 
-        tab.url = url;
+        tab.frame.srcdoc = result.html;
 
-        tab.title = domain;
+        tab.loading = false;
+        tab.error = "";
 
-        tab.element.querySelector(".tab-title").textContent =
-            domain;
+        renderTabs();
 
-        tab.iframe.src = url;
-
-        tab.status.classList.remove("visible");
-
-        switchTab(tab.id);
+        if (tab.id === activeTabId) {
+            updateActiveView();
+        }
 
     } catch(error) {
 
-        if (
-            requestId !== tab.requestId ||
-            !tabs.includes(tab)
-        ) {
-            return;
+        if (id !== tab.requestId) return;
+
+        tab.loading = false;
+        tab.error = "Nebula error: " + error.message;
+
+        if (tab.id === activeTabId) {
+            updateActiveView();
         }
-
-        tab.loading = false;
-        tab.error = true;
-        tab.pendingURL = "";
-
-        tab.status.querySelector(".spinner").style.display =
-            "none";
-
-        tab.status.querySelector(".status-title").textContent =
-            "Unable to load website";
-
-        tab.status.querySelector(".status-message").textContent =
-            error.message || "An unexpected error occurred.";
-
-        switchTab(tab.id);
-
-        console.error("Nebula:", error);
-
     }
+}
 
+function updateActiveView() {
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    document.getElementById("address").value = tab.url || "";
+
+    document.getElementById("homepage").style.display =
+        tab.html ? "none" : "flex";
+
+    document.getElementById("status").textContent =
+        tab.loading ? "Nebula is retrieving the website..." :
+        tab.error ? tab.error : "";
+
+    tabs.forEach(t => {
+        t.frame.style.display =
+            t.id === activeTabId && t.html ? "block" : "none";
+    });
+
+    document.title = tab.title + " - Nebula";
 }
 
 
-/* =================================
-   NAVIGATION
-================================= */
+/* HISTORY */
 
-function navigate(value) {
-
-    let url;
-
-    try {
-        url = formatURL(value);
-    } catch(error) {
-
-        const tab = getActiveTab();
-
-        tab.error = true;
-        tab.loading = false;
-
-        tab.status.querySelector(".spinner").style.display =
-            "none";
-
-        tab.status.querySelector(".status-title").textContent =
-            "Invalid address";
-
-        tab.status.querySelector(".status-message").textContent =
-            error.message;
-
-        switchTab(tab.id);
-
-        return;
-    }
-
-    if (!url) return;
-
-    checkAndLoad(
-        getActiveTab(),
-        url,
-        { type: "push" }
-    );
-
-}
-
-function goBack() {
-
+function back() {
     const tab = getActiveTab();
 
     if (!tab || tab.historyIndex <= 0) return;
 
-    const index = tab.historyIndex - 1;
+    tab.historyIndex--;
 
-    checkAndLoad(
+    loadURL(
         tab,
-        tab.history[index],
-        {
-            type: "move",
-            index: index
-        }
+        tab.history[tab.historyIndex],
+        false
     );
-
 }
 
-function goForward() {
-
+function forward() {
     const tab = getActiveTab();
 
     if (
@@ -895,504 +645,146 @@ function goForward() {
         tab.historyIndex >= tab.history.length - 1
     ) return;
 
-    const index = tab.historyIndex + 1;
+    tab.historyIndex++;
 
-    checkAndLoad(
+    loadURL(
         tab,
-        tab.history[index],
-        {
-            type: "move",
-            index: index
-        }
+        tab.history[tab.historyIndex],
+        false
     );
-
 }
 
-function reloadPage() {
-
+function reload() {
     const tab = getActiveTab();
 
-    if (!tab) return;
+    if (!tab || !tab.url) return;
 
-    if (tab.url) {
-
-        checkAndLoad(
-            tab,
-            tab.url,
-            { type: "reload" }
-        );
-
-    }
-
+    loadURL(tab, tab.url, false);
 }
 
 
-/* =================================
-   NEBULA INFINITE CONSTELLATIONS
-================================= */
+/* CONSTELLATION BACKGROUND */
 
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
-let width = window.innerWidth;
-let height = window.innerHeight;
-
-let constellations = [];
+let stars = [];
 
 let mouse = {
     x: -1000,
-    y: -1000,
-    active: false
+    y: -1000
 };
 
-const SETTINGS = {
-    speed: 32,
-    spawnInterval: 0.65,
-    mouseRadius: 180,
-    connectionDistance: 145,
-    maxMouseConnections: 9
-};
+function resize() {
+    canvas.width = innerWidth * devicePixelRatio;
+    canvas.height = innerHeight * devicePixelRatio;
 
-let spawnTimer = 0;
-let lastTime = 0;
+    canvas.style.width = innerWidth + "px";
+    canvas.style.height = innerHeight + "px";
 
-
-/* CANVAS RESIZING */
-
-function resizeCanvas() {
-
-    const ratio = Math.min(
-        window.devicePixelRatio || 1,
-        2
+    ctx.setTransform(
+        devicePixelRatio,
+        0,
+        0,
+        devicePixelRatio,
+        0,
+        0
     );
 
-    width = window.innerWidth;
-    height = window.innerHeight;
-
-    canvas.width = width * ratio;
-    canvas.height = height * ratio;
-
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-
-    if (constellations.length === 0) {
-
-        const amount = Math.ceil(width / 155);
-
-        for (let i = 0; i < amount; i++) {
-
-            createConstellation(
-                Math.random() * width,
-                Math.random() * height,
-                true
-            );
-
-        }
-
-    }
-
+    stars = Array.from({length: 100}, () => ({
+        x: Math.random() * innerWidth,
+        y: Math.random() * innerHeight,
+        r: Math.random() * 1.5 + 0.5,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25
+    }));
 }
 
+function animate() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
 
-/* CREATE A CONSTELLATION */
+    stars.forEach(star => {
 
-function createConstellation(x, y, initial = false) {
+        star.x += star.vx;
+        star.y += star.vy;
 
-    const starCount = Math.floor(Math.random() * 4) + 4;
+        if (star.x < 0 || star.x > innerWidth) {
+            star.vx *= -1;
+        }
 
-    const group = {
-        x: x,
-        y: y,
-        stars: [],
-        connections: [],
-        speed: SETTINGS.speed * (0.65 + Math.random() * 0.7)
-    };
+        if (star.y < 0 || star.y > innerHeight) {
+            star.vy *= -1;
+        }
 
-    for (let i = 0; i < starCount; i++) {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
 
-        group.stars.push({
+        ctx.fillStyle = "rgba(220,225,255,.8)";
+        ctx.fill();
 
-            x: (Math.random() - 0.5) * 135,
-            y: (Math.random() - 0.5) * 135,
+        const distance = Math.hypot(
+            mouse.x - star.x,
+            mouse.y - star.y
+        );
 
-            radius: Math.random() * 1.5 + 0.5,
+        if (distance < 160) {
+            ctx.beginPath();
+            ctx.moveTo(mouse.x, mouse.y);
+            ctx.lineTo(star.x, star.y);
 
-            opacity: Math.random() * 0.6 + 0.3,
+            ctx.strokeStyle =
+                `rgba(150,160,255,${1-distance/160})`;
 
-            twinkleSpeed: Math.random() * 0.8 + 0.3,
+            ctx.stroke();
+        }
+    });
 
-            twinkleDirection: Math.random() > 0.5 ? 1 : -1
+    for (let i = 0; i < stars.length; i++) {
+        for (let j = i + 1; j < stars.length; j++) {
 
-        });
+            const a = stars[i];
+            const b = stars[j];
 
-    }
-
-    for (let i = 0; i < starCount; i++) {
-
-        let nearest = [];
-
-        for (let j = 0; j < starCount; j++) {
-
-            if (i === j) continue;
-
-            const a = group.stars[i];
-            const b = group.stars[j];
-
-            const distance = Math.hypot(
+            const d = Math.hypot(
                 a.x - b.x,
                 a.y - b.y
             );
 
-            if (distance < SETTINGS.connectionDistance) {
-
-                nearest.push({
-                    index: j,
-                    distance: distance
-                });
-
-            }
-
-        }
-
-        nearest.sort((a, b) => a.distance - b.distance);
-
-        const amount = Math.min(
-            nearest.length,
-            Math.random() > 0.5 ? 2 : 1
-        );
-
-        for (let j = 0; j < amount; j++) {
-
-            const target = nearest[j].index;
-
-            const exists = group.connections.some(connection =>
-                (connection.from === i && connection.to === target) ||
-                (connection.from === target && connection.to === i)
-            );
-
-            if (!exists) {
-
-                group.connections.push({
-                    from: i,
-                    to: target
-                });
-
-            }
-
-        }
-
-    }
-
-    constellations.push(group);
-
-}
-
-
-/* GENERATE NEW CONSTELLATIONS */
-
-function spawnConstellation() {
-
-    const y = Math.random() * height;
-
-    createConstellation(
-        width + 100,
-        y
-    );
-
-}
-
-
-/* DRAW A STAR */
-
-function drawStar(x, y, star) {
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y,
-        star.radius,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fillStyle =
-        `rgba(225,230,255,${star.opacity})`;
-
-    ctx.shadowBlur = 9;
-    ctx.shadowColor = "#9999ff";
-
-    ctx.fill();
-
-    ctx.shadowBlur = 0;
-
-}
-
-
-/* DRAW CONSTELLATIONS */
-
-function drawConstellation(group, delta) {
-
-    group.x -= group.speed * delta;
-
-    group.stars.forEach(star => {
-
-        star.opacity +=
-            star.twinkleSpeed * delta *
-            star.twinkleDirection;
-
-        if (star.opacity > 0.95) {
-
-            star.opacity = 0.95;
-            star.twinkleDirection = -1;
-
-        }
-
-        if (star.opacity < 0.2) {
-
-            star.opacity = 0.2;
-            star.twinkleDirection = 1;
-
-        }
-
-    });
-
-    group.connections.forEach(connection => {
-
-        const a = group.stars[connection.from];
-        const b = group.stars[connection.to];
-
-        const ax = group.x + a.x;
-        const ay = group.y + a.y;
-
-        const bx = group.x + b.x;
-        const by = group.y + b.y;
-
-        ctx.beginPath();
-
-        ctx.moveTo(ax, ay);
-        ctx.lineTo(bx, by);
-
-        ctx.strokeStyle = "rgba(145,150,255,0.22)";
-        ctx.lineWidth = 0.8;
-
-        ctx.stroke();
-
-    });
-
-    group.stars.forEach(star => {
-
-        drawStar(
-            group.x + star.x,
-            group.y + star.y,
-            star
-        );
-
-    });
-
-}
-
-
-/* =================================
-   INTERACTIVE MOUSE CONSTELLATIONS
-================================= */
-
-window.addEventListener("pointermove", function(event) {
-
-    mouse.x = event.clientX;
-    mouse.y = event.clientY;
-
-    mouse.active = true;
-
-});
-
-window.addEventListener("pointerleave", function() {
-
-    mouse.active = false;
-
-});
-
-
-/* MOUSE CONNECTIONS */
-
-function drawMouseConnections() {
-
-    if (!mouse.active) return;
-
-    let nearbyStars = [];
-
-    constellations.forEach(group => {
-
-        group.stars.forEach(star => {
-
-            const x = group.x + star.x;
-            const y = group.y + star.y;
-
-            const distance = Math.hypot(
-                mouse.x - x,
-                mouse.y - y
-            );
-
-            if (distance < SETTINGS.mouseRadius) {
-
-                nearbyStars.push({
-                    x: x,
-                    y: y,
-                    distance: distance,
-                    opacity: star.opacity
-                });
-
-            }
-
-        });
-
-    });
-
-    nearbyStars.sort((a, b) => a.distance - b.distance);
-
-    nearbyStars = nearbyStars.slice(
-        0,
-        SETTINGS.maxMouseConnections
-    );
-
-    nearbyStars.forEach(star => {
-
-        const strength = 1 - (
-            star.distance / SETTINGS.mouseRadius
-        );
-
-        ctx.beginPath();
-
-        ctx.moveTo(mouse.x, mouse.y);
-        ctx.lineTo(star.x, star.y);
-
-        ctx.strokeStyle =
-            `rgba(155,165,255,${strength * 0.55})`;
-
-        ctx.lineWidth = 0.8 + strength * 0.7;
-
-        ctx.stroke();
-
-    });
-
-    for (let i = 0; i < nearbyStars.length; i++) {
-
-        for (let j = i + 1; j < nearbyStars.length; j++) {
-
-            const a = nearbyStars[i];
-            const b = nearbyStars[j];
-
-            const distance = Math.hypot(
-                a.x - b.x,
-                a.y - b.y
-            );
-
-            if (distance < SETTINGS.connectionDistance) {
-
-                const strength = 1 - (
-                    distance / SETTINGS.connectionDistance
-                );
-
+            if (d < 105) {
                 ctx.beginPath();
-
                 ctx.moveTo(a.x, a.y);
                 ctx.lineTo(b.x, b.y);
 
                 ctx.strokeStyle =
-                    `rgba(145,155,255,${strength * 0.35})`;
-
-                ctx.lineWidth = 0.7;
+                    `rgba(140,150,255,${0.18*(1-d/105)})`;
 
                 ctx.stroke();
-
             }
-
         }
-
     }
 
-    if (nearbyStars.length > 0) {
-
-        ctx.beginPath();
-
-        ctx.arc(
-            mouse.x,
-            mouse.y,
-            2,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fillStyle = "rgba(210,215,255,0.9)";
-
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = "#aaaaff";
-
-        ctx.fill();
-
-        ctx.shadowBlur = 0;
-
-    }
-
+    requestAnimationFrame(animate);
 }
 
 
-/* =================================
-   MAIN ANIMATION LOOP
-================================= */
+/* STARTUP */
 
-function animateStars(timestamp) {
+window.addEventListener("resize", resize);
 
-    requestAnimationFrame(animateStars);
+window.addEventListener("pointermove", event => {
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+});
 
-    if (!lastTime) lastTime = timestamp;
+window.addEventListener("pointerleave", () => {
+    mouse.x = -1000;
+    mouse.y = -1000;
+});
 
-    const delta = Math.min(
-        (timestamp - lastTime) / 1000,
-        0.05
-    );
+resize();
+animate();
 
-    lastTime = timestamp;
-
-    ctx.clearRect(0, 0, width, height);
-
-    spawnTimer += delta;
-
-    if (spawnTimer >= SETTINGS.spawnInterval) {
-
-        spawnTimer = 0;
-
-        spawnConstellation();
-
-    }
-
-    constellations.forEach(group => {
-
-        drawConstellation(group, delta);
-
-    });
-
-    constellations = constellations.filter(group => {
-
-        return group.x > -180;
-
-    });
-
-    drawMouseConnections();
-
-}
-
-
-/* =================================
-   START NEBULA
-================================= */
-
-window.addEventListener("resize", resizeCanvas);
-
-resizeCanvas();
-
-requestAnimationFrame(animateStars);
-
-newTab();
+createTab();
 
 </script>
 
