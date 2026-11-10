@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Desmos | Testing</title>
-      <link rel="icon" type="image/png" href="https://www.desmos.com/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="https://www.desmos.com/apple-touch-icon.png">
 
 <style>
 * {
@@ -409,7 +409,8 @@ function switchTab(id) {
 
     document.getElementById("search").value = "";
 
-    document.title = tab.title + " - Nebula";
+    // Keep the actual browser tab title unchanged.
+    document.title = "Desmos | Testing";
 
     renderTabs();
 }
@@ -648,7 +649,8 @@ function updateActiveView() {
             t.id === activeTabId && t.html ? "block" : "none";
     });
 
-    document.title = tab.title + " - Nebula";
+    // Never allow a proxied website to change the browser tab title.
+    document.title = "Desmos | Testing";
 }
 
 
@@ -802,6 +804,15 @@ function animate() {
 
 let nebulaMode = false;
 
+function returnToDesmos() {
+    nebulaMode = false;
+
+    document.body.classList.remove("nebula-mode");
+
+    document.title = "Desmos | Testing";
+}
+
+// Ctrl + Q toggles Nebula.
 window.addEventListener("keydown", event => {
 
     if (
@@ -822,7 +833,29 @@ window.addEventListener("keydown", event => {
 }, true);
 
 
+/* RETURN TO DESMOS WHEN LEAVING THE BROWSER TAB */
+
+// When the user switches to another browser tab.
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        returnToDesmos();
+    }
+});
+
+// Also return to Desmos when the browser window loses focus.
+window.addEventListener("blur", () => {
+    returnToDesmos();
+});
+
+// Keep the title fixed when returning.
+window.addEventListener("focus", () => {
+    document.title = "Desmos | Testing";
+});
+
+
 /* STARTUP */
+
+document.title = "Desmos | Testing";
 
 window.addEventListener("resize", resize);
 
