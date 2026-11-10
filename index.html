@@ -360,7 +360,7 @@ function createTab() {
 
     const frame = document.createElement("iframe");
     frame.className = "viewer";
-    frame.setAttribute("sandbox", "");
+    frame.removeAttribute("sandbox", "");
     frame.setAttribute("referrerpolicy", "no-referrer");
 
     document.getElementById("viewerContainer").appendChild(frame);
