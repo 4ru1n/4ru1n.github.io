@@ -695,7 +695,10 @@ async function navigate(value) {
     let url;
 
     try {
-        url = normalizeURL(input);
+        const isWebsite = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:\d+)?([/?#].*)?$/i.test(input.trim());
+        url = isWebsite
+            ? normalizeURL(input)
+            : "https://www.bing.com/search?q=" + encodeURIComponent(input.trim());
     } catch(error) {
         tab.error = error.message;
         updateActiveView();
