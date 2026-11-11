@@ -230,6 +230,11 @@ main {
     background: white;
 }
 
+    .viewer {
+    overflow: auto;
+    color: black;
+}
+    
 #status {
     position: absolute;
     top: 50%;
@@ -358,10 +363,8 @@ function getActiveTab() {
 function createTab() {
     const id = nextTabId++;
 
-    const frame = document.createElement("iframe");
+    const frame = document.createElement("div");
     frame.className = "viewer";
-    frame.removeAttribute("sandbox", "");
-    frame.setAttribute("referrerpolicy", "no-referrer");
 
     document.getElementById("viewerContainer").appendChild(frame);
 
@@ -605,7 +608,7 @@ async function loadURL(tab, url, addHistory) {
             tab.history[tab.historyIndex] = tab.url;
         }
 
-        tab.frame.srcdoc = result.html;
+        tab.frame.innerHTML = result.html;
 
         tab.loading = false;
         tab.error = "";
