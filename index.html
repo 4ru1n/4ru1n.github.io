@@ -208,6 +208,7 @@ main {
     justify-content: center;
     flex-direction: column;
     gap: 28px;
+    background-color: #070810;
 }
 
 .logo {
@@ -423,7 +424,7 @@ function getActiveTab() {
 function createTab() {
     const id = nextTabId++;
 
-    const frame = document.createElement("div");
+    const frame = document.createElement("iframe");
     frame.className = "viewer";
 
     /*
@@ -432,47 +433,64 @@ function createTab() {
        Supported links load inside the current tab.
     */
 
-    frame.addEventListener("click", event => {
-
-        const link = event.target instanceof Element
-            ? event.target.closest("a")
-            : null;
-
-        if (!link) return;
-
-        event.preventDefault();
-
-        const tab = tabs.find(item => item.frame === frame);
-
-        if (!tab || !tab.url) return;
+    frame.addEventListener("load", () => {
 
         try {
 
-            const destination = new URL(
-                link.getAttribute("href"),
-                tab.url
-            );
+            const pageDocument = frame.contentDocument;
 
-            if (destination.protocol !== "https:") {
-                tab.error = "Only HTTPS websites are supported.";
+            if (!pageDocument) return;
 
-                if (tab.id === activeTabId) {
-                    updateActiveView();
+            pageDocument.addEventListener("click", event => {
+
+                const target = event.target;
+
+                const link = target && typeof target.closest === "function"
+                    ? target.closest("a")
+                    : null;
+
+                if (!link) return;
+
+                event.preventDefault();
+
+                const tab = tabs.find(item => item.frame === frame);
+
+                if (!tab || !tab.url) return;
+
+                try {
+
+                    const destination = new URL(
+                        link.getAttribute("href"),
+                        tab.url
+                    );
+
+                    if (destination.protocol !== "https:") {
+                        tab.error = "Only HTTPS websites are supported.";
+
+                        if (tab.id === activeTabId) {
+                            updateActiveView();
+                        }
+
+                        return;
+                    }
+
+                    loadURL(tab, destination.href, true);
+
+                } catch (error) {
+
+                    tab.error = "Invalid link.";
+
+                    if (tab.id === activeTabId) {
+                        updateActiveView();
+                    }
                 }
 
-                return;
-            }
+            });
 
-            loadURL(tab, destination.href, true);
-
-        } catch (error) {
-
-            tab.error = "Invalid link.";
-
-            if (tab.id === activeTabId) {
-                updateActiveView();
-            }
+        } catch(error) {
+            // Ignore inaccessible frame documents.
         }
+
     });
 
     document.getElementById("viewerContainer").appendChild(frame);
@@ -731,7 +749,9 @@ async function loadURL(tab, url, addHistory) {
             tab.history[tab.historyIndex] = tab.url;
         }
 
-        tab.frame.innerHTML = result.html;
+        /* ISOLATED WEBSITE CONTENT */
+
+        tab.frame.srcdoc = result.html;
 
         tab.loading = false;
         tab.error = "";
