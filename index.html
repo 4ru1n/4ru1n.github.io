@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Desmos | Testing</title>
+<title>Nebula</title>
 <link rel="icon" type="image/png" href="https://www.desmos.com/apple-touch-icon.png">
 
 <style>
@@ -33,6 +33,23 @@ body {
 .browser {
     position: relative;
     z-index: 2;
+}
+
+/* EXAMPLE.COM OVERLAY */
+
+#defaultOverlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: white;
+    z-index: 99999;
+    display: block;
+}
+
+#defaultOverlay.hidden {
+    display: none;
 }
 
 /* TAB BAR */
@@ -228,13 +245,10 @@ main {
     height: 100%;
     border: none;
     background: white;
-}
-
-    .viewer {
     overflow: auto;
     color: black;
 }
-    
+
 #status {
     position: absolute;
     top: 50%;
@@ -261,40 +275,18 @@ main {
         font-size: 55px;
     }
 }
-
-/* DEFAULT FULLSCREEN DESMOS */
-
-#defaultFrame {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    z-index: 9999;
-    background: white;
-    pointer-events: auto;
-}
-
-body.nebula-mode #defaultFrame {
-    display: none;
-}
-
-body:not(.nebula-mode) .browser,
-body:not(.nebula-mode) main,
-body:not(.nebula-mode) #stars {
-    visibility: hidden;
-}
 </style>
 </head>
 
 <body>
 
+<!-- DEFAULT EXAMPLE.COM SCREEN -->
+
 <iframe
-    id="defaultFrame"
+    id="defaultOverlay"
     src="https://www.desmos.com/testing/ohio/scientific"
-    allow="fullscreen"
-    tabindex="-1"
-></iframe>
+    title="Default screen">
+</iframe>
 
 <canvas id="stars"></canvas>
 
@@ -337,7 +329,6 @@ body:not(.nebula-mode) #stars {
     </section>
 
     <div id="status"></div>
-
     <div id="viewerContainer"></div>
 
 </main>
@@ -348,6 +339,67 @@ body:not(.nebula-mode) #stars {
 
 const BACKEND =
 "https://script.google.com/a/macros/jalsd.org/s/AKfycbzHeApHApkpHw_RS79RBNt7acMfUR6pkvKWC9fY5B6lX4wImNOqlee3HXNDya5Rxv6prg/exec";
+
+
+/* AUTHORIZED TEST SITE */
+
+const ALLOWED_HOST = "4ru1n.github.io";
+
+
+/* OVERLAY SYSTEM */
+
+const defaultOverlay = document.getElementById("defaultOverlay");
+
+let nebulaVisible = false;
+
+function showNebula() {
+    nebulaVisible = true;
+    defaultOverlay.classList.add("hidden");
+}
+
+function showDefaultOverlay() {
+    nebulaVisible = false;
+    defaultOverlay.classList.remove("hidden");
+}
+
+/* CTRL + Q TOGGLE */
+
+document.addEventListener("keydown", function(event) {
+
+    if (
+        event.ctrlKey &&
+        event.key.toLowerCase() === "q" &&
+        !event.altKey &&
+        !event.metaKey
+    ) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (nebulaVisible) {
+            showDefaultOverlay();
+        } else {
+            showNebula();
+        }
+    }
+
+});
+
+/* RETURN TO OVERLAY WHEN LEAVING NEBULA TAB */
+
+document.addEventListener("visibilitychange", function() {
+
+    if (document.hidden) {
+        showDefaultOverlay();
+    }
+
+});
+
+/* ALSO HANDLE WINDOW FOCUS CHANGES */
+
+window.addEventListener("blur", function() {
+    showDefaultOverlay();
+});
 
 
 /* TAB SYSTEM */
@@ -365,6 +417,60 @@ function createTab() {
 
     const frame = document.createElement("div");
     frame.className = "viewer";
+
+    /*
+       LINK NAVIGATION
+
+       Supported links load inside the current tab.
+    */
+
+    frame.addEventListener("click", event => {
+
+        const link = event.target instanceof Element
+            ? event.target.closest("a")
+            : null;
+
+        if (!link) return;
+
+        event.preventDefault();
+
+        const tab = tabs.find(item => item.frame === frame);
+
+        if (!tab || !tab.url) return;
+
+        try {
+
+            const destination = new URL(
+                link.getAttribute("href"),
+                tab.url
+            );
+
+            if (
+                destination.protocol !== "https:" ||
+                destination.hostname !== ALLOWED_HOST
+            ) {
+                tab.error =
+                    "This viewer only supports navigation within " +
+                    ALLOWED_HOST + ".";
+
+                if (tab.id === activeTabId) {
+                    updateActiveView();
+                }
+
+                return;
+            }
+
+            loadURL(tab, destination.href, true);
+
+        } catch (error) {
+
+            tab.error = "Invalid link.";
+
+            if (tab.id === activeTabId) {
+                updateActiveView();
+            }
+        }
+    });
 
     document.getElementById("viewerContainer").appendChild(frame);
 
@@ -412,7 +518,7 @@ function switchTab(id) {
 
     document.getElementById("search").value = "";
 
-    document.title = "Desmos | Testing";
+    document.title = "Nebula";
 
     renderTabs();
 }
@@ -448,6 +554,7 @@ function renderTabs() {
     container.innerHTML = "";
 
     tabs.forEach(tab => {
+
         const element = document.createElement("div");
 
         element.className =
@@ -476,6 +583,7 @@ function renderTabs() {
 /* URL HANDLING */
 
 function normalizeURL(value) {
+
     value = value.trim();
 
     if (!value) {
@@ -492,8 +600,13 @@ function normalizeURL(value) {
 
     const parsed = new URL(value);
 
-    if (!parsed.hostname || !parsed.hostname.includes(".")) {
-        throw new Error("Please enter a valid website address.");
+    if (
+        parsed.protocol !== "https:" ||
+        parsed.hostname !== ALLOWED_HOST
+    ) {
+        throw new Error(
+            "This viewer only supports " + ALLOWED_HOST + "."
+        );
     }
 
     return parsed.href;
@@ -503,6 +616,7 @@ function normalizeURL(value) {
 /* BACKEND REQUEST */
 
 function requestPage(url) {
+
     return new Promise((resolve, reject) => {
 
         const callback =
@@ -528,6 +642,7 @@ function requestPage(url) {
         }
 
         window[callback] = result => {
+
             cleanup();
 
             if (!result.success) {
@@ -552,6 +667,7 @@ function requestPage(url) {
 /* NAVIGATION */
 
 async function navigate(value) {
+
     const tab = getActiveTab();
 
     if (!tab) return;
@@ -586,17 +702,29 @@ async function loadURL(tab, url, addHistory) {
     }
 
     try {
+
         const result = await requestPage(url);
 
         if (id !== tab.requestId) return;
-
         if (!tabs.includes(tab)) return;
 
-        tab.url = result.url;
+        const finalURL = new URL(result.url || url);
+
+        if (
+            finalURL.protocol !== "https:" ||
+            finalURL.hostname !== ALLOWED_HOST
+        ) {
+            throw new Error(
+                "Navigation outside " + ALLOWED_HOST + " is blocked."
+            );
+        }
+
+        tab.url = finalURL.href;
         tab.title = result.title || "Nebula";
         tab.html = result.html;
 
         if (addHistory) {
+
             tab.history = tab.history.slice(
                 0,
                 tab.historyIndex + 1
@@ -604,7 +732,9 @@ async function loadURL(tab, url, addHistory) {
 
             tab.history.push(tab.url);
             tab.historyIndex++;
+
         } else if (tab.historyIndex >= 0) {
+
             tab.history[tab.historyIndex] = tab.url;
         }
 
@@ -633,6 +763,7 @@ async function loadURL(tab, url, addHistory) {
 }
 
 function updateActiveView() {
+
     const tab = getActiveTab();
 
     if (!tab) return;
@@ -647,17 +778,19 @@ function updateActiveView() {
         tab.error ? tab.error : "";
 
     tabs.forEach(t => {
+
         t.frame.style.display =
             t.id === activeTabId && t.html ? "block" : "none";
     });
 
-    document.title = "Desmos | Testing";
+    document.title = "Nebula";
 }
 
 
 /* HISTORY */
 
 function back() {
+
     const tab = getActiveTab();
 
     if (!tab || tab.historyIndex <= 0) return;
@@ -672,6 +805,7 @@ function back() {
 }
 
 function forward() {
+
     const tab = getActiveTab();
 
     if (
@@ -689,6 +823,7 @@ function forward() {
 }
 
 function reload() {
+
     const tab = getActiveTab();
 
     if (!tab || !tab.url) return;
@@ -710,6 +845,7 @@ let mouse = {
 };
 
 function resize() {
+
     canvas.width = innerWidth * devicePixelRatio;
     canvas.height = innerHeight * devicePixelRatio;
 
@@ -735,6 +871,7 @@ function resize() {
 }
 
 function animate() {
+
     ctx.clearRect(0, 0, innerWidth, innerHeight);
 
     stars.forEach(star => {
@@ -762,6 +899,7 @@ function animate() {
         );
 
         if (distance < 160) {
+
             ctx.beginPath();
             ctx.moveTo(mouse.x, mouse.y);
             ctx.lineTo(star.x, star.y);
@@ -774,6 +912,7 @@ function animate() {
     });
 
     for (let i = 0; i < stars.length; i++) {
+
         for (let j = i + 1; j < stars.length; j++) {
 
             const a = stars[i];
@@ -785,6 +924,7 @@ function animate() {
             );
 
             if (d < 105) {
+
                 ctx.beginPath();
                 ctx.moveTo(a.x, a.y);
                 ctx.lineTo(b.x, b.y);
@@ -801,58 +941,9 @@ function animate() {
 }
 
 
-/* KEYBOARD TOGGLE */
-
-let nebulaMode = false;
-
-function returnToDesmos() {
-    nebulaMode = false;
-
-    document.body.classList.remove("nebula-mode");
-
-    document.title = "Desmos | Testing";
-}
-
-// Ctrl + Q toggles Nebula.
-window.addEventListener("keydown", event => {
-
-    if (
-        event.ctrlKey &&
-        event.code === "KeyQ" &&
-        !event.repeat
-    ) {
-        event.preventDefault();
-
-        nebulaMode = !nebulaMode;
-
-        document.body.classList.toggle(
-            "nebula-mode",
-            nebulaMode
-        );
-    }
-
-}, true);
-
-
-/* RETURN TO DESMOS WHEN LEAVING THE BROWSER TAB */
-
-// Only switch when the actual browser tab becomes hidden.
-// Clicking or interacting with a proxied website won't trigger this.
-document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-        returnToDesmos();
-    }
-});
-
-// Keep the title fixed when returning.
-window.addEventListener("focus", () => {
-    document.title = "Desmos | Testing";
-});
-
-
 /* STARTUP */
 
-document.title = "Desmos | Testing";
+document.title = "Nebula";
 
 window.addEventListener("resize", resize);
 
