@@ -398,8 +398,16 @@ document.addEventListener("visibilitychange", function() {
 /* ALSO HANDLE WINDOW FOCUS CHANGES */
 
 window.addEventListener("blur", function() {
-    showDefaultOverlay();
+    // Delay slightly to see where the focus actually landed
+    setTimeout(() => {
+        if (document.activeElement && document.activeElement.tagName === "IFRAME") {
+            // If focus moved to an internal iframe, do not trigger the overlay
+            return;
+        }
+        showDefaultOverlay();
+    }, 100);
 });
+
 
 
 /* TAB SYSTEM */
