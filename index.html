@@ -343,7 +343,7 @@ const BACKEND =
 
 /* AUTHORIZED TEST SITE */
 
-const ALLOWED_HOST = "4ru1n.github.io";
+// All websites are now allowed.
 
 
 /* OVERLAY SYSTEM */
@@ -445,13 +445,8 @@ function createTab() {
                 tab.url
             );
 
-            if (
-                destination.protocol !== "https:" ||
-                destination.hostname !== ALLOWED_HOST
-            ) {
-                tab.error =
-                    "This viewer only supports navigation within " +
-                    ALLOWED_HOST + ".";
+            if (destination.protocol !== "https:") {
+                tab.error = "Only HTTPS websites are supported.";
 
                 if (tab.id === activeTabId) {
                     updateActiveView();
@@ -518,7 +513,7 @@ function switchTab(id) {
 
     document.getElementById("search").value = "";
 
-    document.title = "Nebula";
+    document.title = "Desmos | Testing";
 
     renderTabs();
 }
@@ -600,13 +595,8 @@ function normalizeURL(value) {
 
     const parsed = new URL(value);
 
-    if (
-        parsed.protocol !== "https:" ||
-        parsed.hostname !== ALLOWED_HOST
-    ) {
-        throw new Error(
-            "This viewer only supports " + ALLOWED_HOST + "."
-        );
+    if (parsed.protocol !== "https:") {
+        throw new Error("Please use HTTPS.");
     }
 
     return parsed.href;
@@ -710,13 +700,8 @@ async function loadURL(tab, url, addHistory) {
 
         const finalURL = new URL(result.url || url);
 
-        if (
-            finalURL.protocol !== "https:" ||
-            finalURL.hostname !== ALLOWED_HOST
-        ) {
-            throw new Error(
-                "Navigation outside " + ALLOWED_HOST + " is blocked."
-            );
+        if (finalURL.protocol !== "https:") {
+            throw new Error("Only HTTPS websites are supported.");
         }
 
         tab.url = finalURL.href;
@@ -783,7 +768,7 @@ function updateActiveView() {
             t.id === activeTabId && t.html ? "block" : "none";
     });
 
-    document.title = "Nebula";
+    document.title = "Desmos | Testing";
 }
 
 
@@ -943,7 +928,7 @@ function animate() {
 
 /* STARTUP */
 
-document.title = "Nebula";
+document.title = "Desmos | Testing";
 
 window.addEventListener("resize", resize);
 
