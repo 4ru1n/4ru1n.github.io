@@ -531,7 +531,8 @@ function switchTab(id) {
             t.id === id && t.html ? "block" : "none";
     });
 
-    document.getElementById("address").value = tab.url || "";
+    document.getElementById("address").value =
+    tab.url === "nebula://games" ? "nebula://games" : (tab.url || "");
 
     document.getElementById("homepage").style.display =
         tab.html ? "none" : "flex";
@@ -1328,48 +1329,44 @@ function openGamesTab() {
 
     tab.title = "Games";
     tab.url = "nebula://games";
-    tab.html = "games";
+    tab.html = gamesPageHTML;
 
     tab.frame.srcdoc = gamesPageHTML;
-    tab.frame.style.display = "block";
 
+    document.getElementById("address").value = "nebula://games";
     document.getElementById("homepage").style.display = "none";
     document.getElementById("status").textContent = "";
-    document.getElementById("address").value = "nebula://games";
 
     renderTabs();
 
-    tab.frame.onload = function() {
+    tab.frame.addEventListener("load", function() {
         const cards = tab.frame.contentDocument.querySelectorAll(".game-card");
 
         cards.forEach(card => {
             card.addEventListener("click", function() {
                 const gameURL = this.dataset.gameUrl;
+                const gameName = this.querySelector("span").textContent;
 
                 if (!gameURL) return;
 
                 const gameTab = createTab();
 
-                gameTab.title = this.querySelector("span").textContent;
+                gameTab.title = gameName;
                 gameTab.url = "nebula://games";
                 gameTab.html = "game";
 
-                gameTab.frame.src = "about:blank";
-
-requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-        gameTab.frame.src = gameURL;
-    });
-});
+                gameTab.frame.style.display = "block";
 
                 document.getElementById("homepage").style.display = "none";
                 document.getElementById("status").textContent = "";
-                document.getElementById("address").value = gameURL;
+                document.getElementById("address").value = "nebula://games";
+
+                gameTab.frame.src = gameURL;
 
                 renderTabs();
             });
         });
-    };
+    });
 }
 
 gamesButton.addEventListener("click", openGamesTab);
