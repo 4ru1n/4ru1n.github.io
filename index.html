@@ -983,5 +983,390 @@ createTab();
 
 </script>
 
+    
+<script>
+
+/* NEBULA GAMES SYSTEM */
+
+/* GAMES BUTTON */
+
+const gamesButton = document.createElement("button");
+
+gamesButton.textContent = "Games";
+
+gamesButton.style.cssText = `
+    position: absolute;
+    top: 14px;
+    right: 26px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+    z-index: 5;
+`;
+
+document.getElementById("homepage").appendChild(gamesButton);
+
+
+/* GAMES PAGE */
+
+const gamesPageHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 25px;
+    background: #070810;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-rows: repeat(5, 150px);
+    gap: 16px;
+}
+
+.game-card {
+    background: #191a28;
+    border: 1px solid #393a4d;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    color: white;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s;
+}
+
+.game-card:hover {
+    background: #292b40;
+}
+
+.game-card img {
+    width: 100%;
+    height: 90px;
+    object-fit: contain;
+}
+
+.game-card span {
+    margin-top: 9px;
+    font-size: 13px;
+}
+
+@media(max-width: 700px) {
+    .games-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-rows: auto;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="games-grid">
+
+<!-- Placeholder 1 (code below) -->
+<button class="game-card" data-game-index="0" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 1</span>
+</button>
+
+<!-- Placeholder 2 (code below) -->
+<button class="game-card" data-game-index="1" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 2</span>
+</button>
+
+<!-- Placeholder 3 (code below) -->
+<button class="game-card" data-game-index="2" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 3</span>
+</button>
+
+<!-- Placeholder 4 (code below) -->
+<button class="game-card" data-game-index="3" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 4</span>
+</button>
+
+<!-- Placeholder 5 (code below) -->
+<button class="game-card" data-game-index="4" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 5</span>
+</button>
+
+<!-- Placeholder 6 (code below) -->
+<button class="game-card" data-game-index="5" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 6</span>
+</button>
+
+<!-- Placeholder 7 (code below) -->
+<button class="game-card" data-game-index="6" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 7</span>
+</button>
+
+<!-- Placeholder 8 (code below) -->
+<button class="game-card" data-game-index="7" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 8</span>
+</button>
+
+<!-- Placeholder 9 (code below) -->
+<button class="game-card" data-game-index="8" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 9</span>
+</button>
+
+<!-- Placeholder 10 (code below) -->
+<button class="game-card" data-game-index="9" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 10</span>
+</button>
+
+<!-- Placeholder 11 (code below) -->
+<button class="game-card" data-game-index="10" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 11</span>
+</button>
+
+<!-- Placeholder 12 (code below) -->
+<button class="game-card" data-game-index="11" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 12</span>
+</button>
+
+<!-- Placeholder 13 (code below) -->
+<button class="game-card" data-game-index="12" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 13</span>
+</button>
+
+<!-- Placeholder 14 (code below) -->
+<button class="game-card" data-game-index="13" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 14</span>
+</button>
+
+<!-- Placeholder 15 (code below) -->
+<button class="game-card" data-game-index="14" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 15</span>
+</button>
+
+<!-- Placeholder 16 (code below) -->
+<button class="game-card" data-game-index="15" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 16</span>
+</button>
+
+<!-- Placeholder 17 (code below) -->
+<button class="game-card" data-game-index="16" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 17</span>
+</button>
+
+<!-- Placeholder 18 (code below) -->
+<button class="game-card" data-game-index="17" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 18</span>
+</button>
+
+<!-- Placeholder 19 (code below) -->
+<button class="game-card" data-game-index="18" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 19</span>
+</button>
+
+<!-- Placeholder 20 (code below) -->
+<button class="game-card" data-game-index="19" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 20</span>
+</button>
+
+<!-- Placeholder 21 (code below) -->
+<button class="game-card" data-game-index="20" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 21</span>
+</button>
+
+<!-- Placeholder 22 (code below) -->
+<button class="game-card" data-game-index="21" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 22</span>
+</button>
+
+<!-- Placeholder 23 (code below) -->
+<button class="game-card" data-game-index="22" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 23</span>
+</button>
+
+<!-- Placeholder 24 (code below) -->
+<button class="game-card" data-game-index="23" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 24</span>
+</button>
+
+<!-- Placeholder 25 (code below) -->
+<button class="game-card" data-game-index="24" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 25</span>
+</button>
+
+<!-- Placeholder 26 (code below) -->
+<button class="game-card" data-game-index="25" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 26</span>
+</button>
+
+<!-- Placeholder 27 (code below) -->
+<button class="game-card" data-game-index="26" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 27</span>
+</button>
+
+<!-- Placeholder 28 (code below) -->
+<button class="game-card" data-game-index="27" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 28</span>
+</button>
+
+<!-- Placeholder 29 (code below) -->
+<button class="game-card" data-game-index="28" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 29</span>
+</button>
+
+<!-- Placeholder 30 (code below) -->
+<button class="game-card" data-game-index="29" data-game-url="about:blank">
+<img src="https://www.desmos.com/apple-touch-icon.png">
+<span>Placeholder 30</span>
+</button>
+
+</div>
+</body>
+</html>
+`;
+
+
+/* GAME IFRAME */
+
+const gameOverlay = document.createElement("iframe");
+
+gameOverlay.style.cssText = `
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: white;
+    display: none;
+    z-index: 20;
+`;
+
+document.querySelector("main").appendChild(gameOverlay);
+
+
+/* OPEN GAMES TAB */
+
+function openGamesTab() {
+
+    const tab = createTab();
+
+    tab.title = "Games";
+    tab.url = "";
+    tab.html = gamesPageHTML;
+
+    tab.frame.addEventListener("load", function() {
+
+        try {
+
+            const doc = tab.frame.contentDocument;
+
+            doc.addEventListener("click", function(event) {
+
+                const card = event.target.closest("[data-game-index]");
+
+                if (!card) return;
+
+                event.preventDefault();
+
+                const url = card.getAttribute("data-game-url");
+
+                gameOverlay.src = url;
+                gameOverlay.style.display = "block";
+
+            });
+
+        } catch(error) {}
+
+    });
+
+    tab.frame.srcdoc = gamesPageHTML;
+
+    switchTab(tab.id);
+
+}
+
+
+/* BACK BUTTON SUPPORT */
+
+const originalNebulaBack = back;
+
+back = function() {
+
+    if (gameOverlay.style.display === "block") {
+
+        gameOverlay.style.display = "none";
+        gameOverlay.src = "about:blank";
+
+        return;
+    }
+
+    originalNebulaBack();
+
+};
+
+
+/* HIDE GAME IFRAME WHEN SWITCHING TABS */
+
+const originalNebulaSwitchTab = switchTab;
+
+switchTab = function(id) {
+
+    gameOverlay.style.display = "none";
+    gameOverlay.src = "about:blank";
+
+    originalNebulaSwitchTab(id);
+
+};
+
+
+/* GAMES BUTTON ACTION */
+
+gamesButton.addEventListener("click", openGamesTab);
+
+</script>
+</body>
+</html>
+
 </body>
 </html>
