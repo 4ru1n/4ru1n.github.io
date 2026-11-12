@@ -1318,18 +1318,7 @@ switchTab = function(id) {
 };
 
 
-/* HIDE GAME IFRAME WHEN SWITCHING TABS */
 
-const originalNebulaSwitchTab = switchTab;
-
-switchTab = function(id) {
-
-    gameOverlay.style.display = "none";
-    gameOverlay.src = "about:blank";
-
-    originalNebulaSwitchTab(id);
-
-};
 
 
 /* GAMES BUTTON ACTION */
