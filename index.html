@@ -1351,7 +1351,7 @@ function openGamesTab() {
                 const gameTab = createTab();
 
                 gameTab.title = this.querySelector("span").textContent;
-                gameTab.url = gameURL;
+                gameTab.url = "nebula://games";
                 gameTab.html = "game";
 
                 gameTab.frame.src = gameURL;
