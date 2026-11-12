@@ -846,7 +846,19 @@ function reload() {
 
     const tab = getActiveTab();
 
-    if (!tab || !tab.url) return;
+    if (!tab) return;
+
+    if (tab.gameURL) {
+        tab.frame.src = tab.gameURL;
+        return;
+    }
+
+    if (tab.url === "nebula://games") {
+        tab.frame.srcdoc = gamesPageHTML;
+        return;
+    }
+
+    if (!tab.url) return;
 
     loadURL(tab, tab.url, false);
 }
@@ -1268,61 +1280,9 @@ body {
 `;
 
 
-/* GAME IFRAME */
+/* NEBULA GAME TABS */
 
-const gameOverlay = document.createElement("iframe");
-
-gameOverlay.style.cssText = `
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    background: white;
-    display: none;
-    z-index: 20;
-`;
-
-document.querySelector("main").appendChild(gameOverlay);
-
-
-/* BACK BUTTON SUPPORT */
-
-const originalNebulaBack = back;
-
-back = function() {
-
-    if (gameOverlay.style.display === "block") {
-
-        gameOverlay.style.display = "none";
-        gameOverlay.src = "about:blank";
-
-        return;
-    }
-
-    originalNebulaBack();
-
-};
-
-
-/* HIDE GAME IFRAME WHEN SWITCHING TABS */
-
-const originalNebulaSwitchTab = switchTab;
-
-switchTab = function(id) {
-
-    gameOverlay.style.display = "none";
-    gameOverlay.src = "about:blank";
-
-    originalNebulaSwitchTab(id);
-
-};
-
-
-
-
-
-/* GAMES BUTTON ACTION */
+/* GAMES PAGE OPENS IN ITS OWN NEBULA TAB */
 
 function openGamesTab() {
     const tab = createTab();
@@ -1331,42 +1291,62 @@ function openGamesTab() {
     tab.url = "nebula://games";
     tab.html = gamesPageHTML;
 
-    tab.frame.srcdoc = gamesPageHTML;
+    // Listen before loading srcdoc so the first load is not missed.
+    tab.frame.addEventListener("load", function onGamesPageLoad() {
+        let pageDocument;
 
-    document.getElementById("address").value = "nebula://games";
-    document.getElementById("homepage").style.display = "none";
-    document.getElementById("status").textContent = "";
+        try {
+            pageDocument = tab.frame.contentDocument;
+        } catch (error) {
+            return;
+        }
 
-    renderTabs();
+        if (!pageDocument || pageDocument.documentElement.dataset.gamesReady) {
+            return;
+        }
 
-    tab.frame.addEventListener("load", function() {
-        const cards = tab.frame.contentDocument.querySelectorAll(".game-card");
+        pageDocument.documentElement.dataset.gamesReady = "true";
 
-        cards.forEach(card => {
-            card.addEventListener("click", function() {
-                const gameURL = this.dataset.gameUrl;
-                const gameName = this.querySelector("span").textContent;
+        // One delegated handler covers all 30 placeholders.
+        pageDocument.addEventListener("click", function(event) {
+            const card = event.target.closest(".game-card");
+            if (!card) return;
 
-                if (!gameURL) return;
+            const gameURL = card.dataset.gameUrl;
+            const gameName = card.querySelector("span")?.textContent || "Game";
 
-                const gameTab = createTab();
+            if (!gameURL) return;
 
-                gameTab.title = gameName;
-                gameTab.url = "nebula://games";
-                gameTab.html = "game";
-
-                gameTab.frame.style.display = "block";
-
-                document.getElementById("homepage").style.display = "none";
-                document.getElementById("status").textContent = "";
-                document.getElementById("address").value = "nebula://games";
-
-                gameTab.frame.src = gameURL;
-
-                renderTabs();
-            });
+            openGameInNebulaTab(gameURL, gameName);
         });
     });
+
+    tab.frame.srcdoc = gamesPageHTML;
+
+    // Re-select after setting the tab data so the iframe and address bar update.
+    switchTab(tab.id);
+    document.getElementById("address").value = "nebula://games";
+    renderTabs();
+}
+
+
+/* OPEN A GAME IN A NEW NEBULA TAB */
+
+function openGameInNebulaTab(gameURL, gameName) {
+    const gameTab = createTab();
+
+    gameTab.title = gameName;
+    gameTab.url = "nebula://games";
+    gameTab.gameURL = gameURL;
+    gameTab.html = "game";
+
+    // Load the actual game in this Nebula tab's iframe.
+    gameTab.frame.src = gameURL;
+
+    // Re-select after setting the tab data. The URL bar stays nebula://games.
+    switchTab(gameTab.id);
+    document.getElementById("address").value = "nebula://games";
+    renderTabs();
 }
 
 gamesButton.addEventListener("click", openGamesTab);
@@ -1375,5 +1355,3 @@ gamesButton.addEventListener("click", openGamesTab);
 </body>
 </html>
 
-</body>
-</html>
