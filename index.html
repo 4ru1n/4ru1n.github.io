@@ -1354,7 +1354,13 @@ function openGamesTab() {
                 gameTab.url = "nebula://games";
                 gameTab.html = "game";
 
-                gameTab.frame.src = gameURL;
+                gameTab.frame.src = "about:blank";
+
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        gameTab.frame.src = gameURL;
+    });
+});
 
                 document.getElementById("homepage").style.display = "none";
                 document.getElementById("status").textContent = "";
