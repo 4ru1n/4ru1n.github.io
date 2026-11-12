@@ -1326,6 +1326,20 @@ switchTab = function(id) {
 function openGamesTab() {
     gameOverlay.srcdoc = gamesPageHTML;
     gameOverlay.style.display = "block";
+
+    gameOverlay.onload = function() {
+        const cards = gameOverlay.contentDocument.querySelectorAll(".game-card");
+
+        cards.forEach(card => {
+            card.addEventListener("click", function() {
+                const gameURL = this.dataset.gameUrl;
+
+                if (gameURL) {
+                    window.open(gameURL, "_blank");
+                }
+            });
+        });
+    };
 }
 
 gamesButton.addEventListener("click", openGamesTab);
