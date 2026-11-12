@@ -1323,6 +1323,11 @@ switchTab = function(id) {
 
 /* GAMES BUTTON ACTION */
 
+function openGamesTab() {
+    gameOverlay.srcdoc = gamesPageHTML;
+    gameOverlay.style.display = "block";
+}
+
 gamesButton.addEventListener("click", openGamesTab);
 
 </script>
