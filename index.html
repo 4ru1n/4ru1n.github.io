@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -532,60 +531,23 @@ function switchTab(id) {
     });
 
     document.getElementById("address").value =
-    tab.url === "nebula://games" ? "nebula://games" : (tab.url || "");
+        tab.url || "";
 
-    document.getElementById("homepage").style.display =
-        tab.html ? "none" : "flex";
-
-    document.getElementById("status").textContent =
-        tab.loading ? "Nebula is retrieving the website..." :
-        tab.error ? tab.error : "";
-
-    document.getElementById("search").value = "";
-
-    document.title = "Desmos | Testing";
-
-    renderTabs();
-}
-
-function closeTab(id, event) {
-    if (event) event.stopPropagation();
-
-    const index = tabs.findIndex(tab => tab.id === id);
-
-    if (index === -1) return;
-
-    const wasActive = activeTabId === id;
-
-    tabs[index].frame.remove();
-    tabs.splice(index, 1);
-
-    if (tabs.length === 0) {
-        createTab();
-        return;
-    }
-
-    if (wasActive) {
-        const next = tabs[Math.max(0, index - 1)];
-        switchTab(next.id);
-    }
-
+    updateActiveView();
     renderTabs();
 }
 
 function renderTabs() {
-    const container = document.getElementById("tabList");
+    const tabList = document.getElementById("tabList");
 
-    container.innerHTML = "";
+    tabList.innerHTML = "";
 
     tabs.forEach(tab => {
 
-        const element = document.createElement("div");
+        const tabElement = document.createElement("div");
 
-        element.className =
+        tabElement.className =
             "tab" + (tab.id === activeTabId ? " active" : "");
-
-        element.onclick = () => switchTab(tab.id);
 
         const title = document.createElement("span");
         title.className = "tab-title";
@@ -594,412 +556,223 @@ function renderTabs() {
         const close = document.createElement("button");
         close.className = "tab-close";
         close.textContent = "×";
-        close.title = "Close tab";
-        close.onclick = event => closeTab(tab.id, event);
 
-        element.appendChild(title);
-        element.appendChild(close);
+        close.onclick = event => {
+            event.stopPropagation();
+            closeTab(tab.id);
+        };
 
-        container.appendChild(element);
+        tabElement.appendChild(title);
+        tabElement.appendChild(close);
+
+        tabElement.onclick = () => switchTab(tab.id);
+
+        tabList.appendChild(tabElement);
     });
 }
 
+function closeTab(id) {
+    const index = tabs.findIndex(tab => tab.id === id);
 
-/* URL HANDLING */
+    if (index === -1) return;
 
-function normalizeURL(value) {
+    tabs[index].frame.remove();
+    tabs.splice(index, 1);
 
-    value = value.trim();
+    if (activeTabId === id) {
 
-    if (!value) {
-        throw new Error("Enter a website.");
-    }
-
-    if (/^http:\/\//i.test(value)) {
-        throw new Error("Please use HTTPS.");
-    }
-
-    if (!/^https:\/\//i.test(value)) {
-        value = "https://" + value;
-    }
-
-    const parsed = new URL(value);
-
-    if (parsed.protocol !== "https:") {
-        throw new Error("Please use HTTPS.");
-    }
-
-    return parsed.href;
-}
-
-
-/* BACKEND REQUEST */
-
-function requestPage(url) {
-
-    return new Promise((resolve, reject) => {
-
-        const callback =
-            "nebulaCallback" + Date.now() +
-            Math.floor(Math.random() * 100000);
-
-        const script = document.createElement("script");
-
-        const params = new URLSearchParams({
-            url,
-            callback
-        });
-
-        const timeout = setTimeout(() => {
-            cleanup();
-            reject(new Error("Request timed out."));
-        }, 30000);
-
-        function cleanup() {
-            clearTimeout(timeout);
-            script.remove();
-            delete window[callback];
-        }
-
-        window[callback] = result => {
-
-            cleanup();
-
-            if (!result.success) {
-                reject(new Error(result.error));
-            } else {
-                resolve(result);
-            }
-        };
-
-        script.onerror = () => {
-            cleanup();
-            reject(new Error("Backend connection failed."));
-        };
-
-        script.src = BACKEND + "?" + params.toString();
-
-        document.head.appendChild(script);
-    });
-}
-
-
-/* NAVIGATION */
-
-async function navigate(value) {
-
-    const tab = getActiveTab();
-
-    if (!tab) return;
-
-    const input = value ||
-        document.getElementById("address").value ||
-        document.getElementById("search").value;
-
-    let url;
-
-    try {
-        const isWebsite = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:\d+)?([/?#].*)?$/i.test(input.trim());
-        url = isWebsite
-            ? normalizeURL(input)
-            : "https://www.bing.com/search?q=" + encodeURIComponent(input.trim());
-    } catch(error) {
-        tab.error = error.message;
-        updateActiveView();
-        return;
-    }
-
-    await loadURL(tab, url, true);
-}
-
-async function loadURL(tab, url, addHistory) {
-
-    const id = ++tab.requestId;
-
-    tab.loading = true;
-    tab.error = "";
-    tab.html = "";
-
-    if (tab.id === activeTabId) {
-        updateActiveView();
-    }
-
-    try {
-
-        const result = await requestPage(url);
-
-        if (id !== tab.requestId) return;
-        if (!tabs.includes(tab)) return;
-
-        const finalURL = new URL(result.url || url);
-
-        if (finalURL.protocol !== "https:") {
-            throw new Error("Only HTTPS websites are supported.");
-        }
-
-        tab.url = finalURL.href;
-        tab.title = result.title || "Nebula";
-        tab.html = result.html;
-
-        if (addHistory) {
-
-            tab.history = tab.history.slice(
-                0,
-                tab.historyIndex + 1
-            );
-
-            tab.history.push(tab.url);
-            tab.historyIndex++;
-
-        } else if (tab.historyIndex >= 0) {
-
-            tab.history[tab.historyIndex] = tab.url;
-        }
-
-        /* ISOLATED WEBSITE CONTENT */
-
-        tab.frame.srcdoc = result.html;
-
-        tab.loading = false;
-        tab.error = "";
-
-        renderTabs();
-
-        if (tab.id === activeTabId) {
-            updateActiveView();
-        }
-
-    } catch(error) {
-
-        if (id !== tab.requestId) return;
-
-        tab.loading = false;
-        tab.error = "Nebula error: " + error.message;
-
-        if (tab.id === activeTabId) {
-            updateActiveView();
+        if (tabs.length) {
+            switchTab(tabs[Math.max(0, index - 1)].id);
+        } else {
+            activeTabId = null;
+            document.getElementById("address").value = "";
+            document.getElementById("viewerContainer").innerHTML = "";
+            document.getElementById("homepage").style.display = "flex";
         }
     }
+
+    renderTabs();
 }
 
 function updateActiveView() {
-
     const tab = getActiveTab();
 
-    if (!tab) return;
+    if (!tab) {
+        document.getElementById("homepage").style.display = "flex";
+        return;
+    }
 
-    document.getElementById("address").value = tab.url || "";
-
-    document.getElementById("homepage").style.display =
-        tab.html ? "none" : "flex";
-
-    document.getElementById("status").textContent =
-        tab.loading ? "Nebula is retrieving the website..." :
-        tab.error ? tab.error : "";
+    document.getElementById("homepage").style.display = "none";
 
     tabs.forEach(t => {
-
         t.frame.style.display =
             t.id === activeTabId && t.html ? "block" : "none";
     });
 
-    document.title = "Desmos | Testing";
+    if (tab.error) {
+        document.getElementById("status").textContent = tab.error;
+        return;
+    }
+
+    document.getElementById("status").textContent =
+        tab.loading ? "Loading..." : "";
 }
 
+function loadURL(tab, url, addHistory = true) {
+    if (!tab) return;
 
-/* HISTORY */
+    tab.url = url;
+    tab.error = "";
+    tab.loading = true;
+
+    if (addHistory) {
+        tab.history = tab.history.slice(0, tab.historyIndex + 1);
+        tab.history.push(url);
+        tab.historyIndex++;
+    }
+
+    if (tab.id === activeTabId) {
+        document.getElementById("address").value = url;
+        updateActiveView();
+    }
+
+    const requestId = ++tab.requestId;
+
+    fetch(BACKEND + "?url=" + encodeURIComponent(url))
+        .then(response => response.text())
+        .then(html => {
+
+            if (requestId !== tab.requestId) return;
+
+            tab.html = html;
+            tab.loading = false;
+            tab.frame.srcdoc = html;
+
+            if (tab.id === activeTabId) {
+                updateActiveView();
+            }
+
+        })
+        .catch(() => {
+
+            if (requestId !== tab.requestId) return;
+
+            tab.loading = false;
+            tab.error = "Unable to load this website.";
+
+            if (tab.id === activeTabId) {
+                updateActiveView();
+            }
+
+        });
+}
+
+function navigate() {
+    const input =
+        document.getElementById("address").value.trim() ||
+        document.getElementById("search").value.trim();
+
+    if (!input) return;
+
+    showNebula();
+
+    let url;
+
+    if (input.includes(".") && !input.includes(" ")) {
+        url = input.startsWith("http")
+            ? input
+            : "https://" + input;
+    } else {
+        url = "https://www.bing.com/search?q=" +
+            encodeURIComponent(input);
+    }
+
+    let tab = getActiveTab();
+
+    if (!tab) {
+        tab = createTab();
+    }
+
+    loadURL(tab, url);
+}
 
 function back() {
-
     const tab = getActiveTab();
 
     if (!tab || tab.historyIndex <= 0) return;
 
     tab.historyIndex--;
-
-    loadURL(
-        tab,
-        tab.history[tab.historyIndex],
-        false
-    );
+    loadURL(tab, tab.history[tab.historyIndex], false);
 }
 
 function forward() {
-
     const tab = getActiveTab();
 
-    if (
-        !tab ||
-        tab.historyIndex >= tab.history.length - 1
-    ) return;
+    if (!tab || tab.historyIndex >= tab.history.length - 1) return;
 
     tab.historyIndex++;
-
-    loadURL(
-        tab,
-        tab.history[tab.historyIndex],
-        false
-    );
+    loadURL(tab, tab.history[tab.historyIndex], false);
 }
 
 function reload() {
-
     const tab = getActiveTab();
 
-    if (!tab) return;
-
-    if (tab.gameURL) {
-        tab.frame.src = tab.gameURL;
-        return;
-    }
-
-    if (tab.url === "nebula://games") {
-        tab.frame.srcdoc = gamesPageHTML;
-        return;
-    }
-
-    if (!tab.url) return;
+    if (!tab || !tab.url) return;
 
     loadURL(tab, tab.url, false);
 }
 
 
-/* CONSTELLATION BACKGROUND */
+/* STARS BACKGROUND */
 
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
 let stars = [];
 
-let mouse = {
-    x: -1000,
-    y: -1000
-};
+function resizeStars() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-function resize() {
+    stars = [];
 
-    canvas.width = innerWidth * devicePixelRatio;
-    canvas.height = innerHeight * devicePixelRatio;
-
-    canvas.style.width = innerWidth + "px";
-    canvas.style.height = innerHeight + "px";
-
-    ctx.setTransform(
-        devicePixelRatio,
-        0,
-        0,
-        devicePixelRatio,
-        0,
-        0
-    );
-
-    stars = Array.from({length: 100}, () => ({
-        x: Math.random() * innerWidth,
-        y: Math.random() * innerHeight,
-        r: Math.random() * 1.5 + 0.5,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25
-    }));
+    for (let i = 0; i < 100; i++) {
+        stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 1.5,
+            speed: Math.random() * 0.3 + 0.05
+        });
+    }
 }
 
-function animate() {
-
-    ctx.clearRect(0, 0, innerWidth, innerHeight);
+function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     stars.forEach(star => {
-
-        star.x += star.vx;
-        star.y += star.vy;
-
-        if (star.x < 0 || star.x > innerWidth) {
-            star.vx *= -1;
-        }
-
-        if (star.y < 0 || star.y > innerHeight) {
-            star.vy *= -1;
-        }
+        ctx.fillStyle = "white";
+        ctx.globalAlpha = Math.random() * 0.5 + 0.3;
 
         ctx.beginPath();
-        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-
-        ctx.fillStyle = "rgba(220,225,255,.8)";
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         ctx.fill();
 
-        const distance = Math.hypot(
-            mouse.x - star.x,
-            mouse.y - star.y
-        );
+        star.y += star.speed;
 
-        if (distance < 160) {
-
-            ctx.beginPath();
-            ctx.moveTo(mouse.x, mouse.y);
-            ctx.lineTo(star.x, star.y);
-
-            ctx.strokeStyle =
-                `rgba(150,160,255,${1-distance/160})`;
-
-            ctx.stroke();
+        if (star.y > canvas.height) {
+            star.y = 0;
+            star.x = Math.random() * canvas.width;
         }
     });
 
-    for (let i = 0; i < stars.length; i++) {
-
-        for (let j = i + 1; j < stars.length; j++) {
-
-            const a = stars[i];
-            const b = stars[j];
-
-            const d = Math.hypot(
-                a.x - b.x,
-                a.y - b.y
-            );
-
-            if (d < 105) {
-
-                ctx.beginPath();
-                ctx.moveTo(a.x, a.y);
-                ctx.lineTo(b.x, b.y);
-
-                ctx.strokeStyle =
-                    `rgba(140,150,255,${0.18*(1-d/105)})`;
-
-                ctx.stroke();
-            }
-        }
-    }
-
-    requestAnimationFrame(animate);
+    requestAnimationFrame(drawStars);
 }
 
+window.addEventListener("resize", resizeStars);
 
-/* STARTUP */
+resizeStars();
+drawStars();
 
-document.title = "Desmos | Testing";
-
-window.addEventListener("resize", resize);
-
-window.addEventListener("pointermove", event => {
-    mouse.x = event.clientX;
-    mouse.y = event.clientY;
-});
-
-window.addEventListener("pointerleave", () => {
-    mouse.x = -1000;
-    mouse.y = -1000;
-});
-
-resize();
-animate();
-
-createTab();
-
-</script>
-
-    
-<script>
-
-/* NEBULA GAMES SYSTEM */
 
 /* GAMES BUTTON */
 
@@ -1052,33 +825,33 @@ body {
 }
 
 .game-card {
-    background: #191a28;
-    border: 1px solid #393a4d;
-    border-radius: 14px;
-    overflow: hidden;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
     cursor: pointer;
     color: white;
-    padding: 10px;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: background .15s;
+    transition: opacity .15s;
 }
 
 .game-card:hover {
-    background: #292b40;
+    opacity: .8;
 }
 
 .game-card img {
     width: 100%;
-    height: 90px;
+    height: 110px;
     object-fit: contain;
 }
 
 .game-card span {
-    margin-top: 9px;
-    font-size: 13px;
+    margin-top: 4px;
+    font-size: 11px;
 }
 
 @media(max-width: 700px) {
@@ -1354,4 +1127,3 @@ gamesButton.addEventListener("click", openGamesTab);
 </script>
 </body>
 </html>
-
