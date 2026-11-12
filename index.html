@@ -431,7 +431,7 @@ function createTab() {
     /*
        LINK NAVIGATION
 
-       Supported links load inside the current tab.
+       All supported links load inside the current proxy tab.
     */
 
     frame.addEventListener("load", () => {
@@ -453,6 +453,8 @@ function createTab() {
                 if (!link) return;
 
                 event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
 
                 const tab = tabs.find(item => item.frame === frame);
 
@@ -461,7 +463,7 @@ function createTab() {
                 try {
 
                     const destination = new URL(
-                        link.getAttribute("href"),
+                        link.href,
                         tab.url
                     );
 
@@ -486,7 +488,7 @@ function createTab() {
                     }
                 }
 
-            });
+            }, true);
 
         } catch(error) {
             // Ignore inaccessible frame documents.
