@@ -1324,19 +1324,43 @@ switchTab = function(id) {
 /* GAMES BUTTON ACTION */
 
 function openGamesTab() {
-    gameOverlay.srcdoc = gamesPageHTML;
-    gameOverlay.style.display = "block";
+    const tab = createTab();
 
-    gameOverlay.onload = function() {
-        const cards = gameOverlay.contentDocument.querySelectorAll(".game-card");
+    tab.title = "Games";
+    tab.url = "nebula://games";
+    tab.html = "games";
+
+    tab.frame.srcdoc = gamesPageHTML;
+    tab.frame.style.display = "block";
+
+    document.getElementById("homepage").style.display = "none";
+    document.getElementById("status").textContent = "";
+    document.getElementById("address").value = "nebula://games";
+
+    renderTabs();
+
+    tab.frame.onload = function() {
+        const cards = tab.frame.contentDocument.querySelectorAll(".game-card");
 
         cards.forEach(card => {
             card.addEventListener("click", function() {
                 const gameURL = this.dataset.gameUrl;
 
-                if (gameURL) {
-                    window.open(gameURL, "_blank");
-                }
+                if (!gameURL) return;
+
+                const gameTab = createTab();
+
+                gameTab.title = this.querySelector("span").textContent;
+                gameTab.url = gameURL;
+                gameTab.html = "game";
+
+                gameTab.frame.src = gameURL;
+
+                document.getElementById("homepage").style.display = "none";
+                document.getElementById("status").textContent = "";
+                document.getElementById("address").value = gameURL;
+
+                renderTabs();
             });
         });
     };
