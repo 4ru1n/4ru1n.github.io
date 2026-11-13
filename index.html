@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -419,16 +420,13 @@ document.addEventListener("visibilitychange", function() {
 /* ALSO HANDLE WINDOW FOCUS CHANGES */
 
 window.addEventListener("blur", function() {
-    // Delay slightly to see where the focus actually landed
     setTimeout(() => {
         if (document.activeElement && document.activeElement.tagName === "IFRAME") {
-            // If focus moved to an internal iframe, do not trigger the overlay
             return;
         }
         showDefaultOverlay();
     }, 100);
 });
-
 
 
 /* TAB SYSTEM */
@@ -608,20 +606,24 @@ function closeTab(id) {
             document.getElementById("address").value = "";
             document.getElementById("viewerContainer").innerHTML = "";
             document.getElementById("homepage").style.display = "flex";
+            document.getElementById("status").textContent = "";
         }
     }
 
     renderTabs();
 }
 
-/* FIXED: SHOW THE HOMEPAGE WHEN THE ACTIVE TAB IS EMPTY */
+
+/* FIXED: DISPLAY LOADING AND ERROR STATES */
 
 function updateActiveView() {
     const tab = getActiveTab();
+    const homepage = document.getElementById("homepage");
+    const status = document.getElementById("status");
 
-    if (!tab || !tab.html) {
-        document.getElementById("homepage").style.display = "";
-        document.getElementById("status").textContent = "";
+    if (!tab) {
+        homepage.style.display = "flex";
+        status.textContent = "";
 
         tabs.forEach(t => {
             t.frame.style.display = "none";
@@ -630,7 +632,9 @@ function updateActiveView() {
         return;
     }
 
-    document.getElementById("homepage").style.display = "none";
+    // Hide the homepage whenever a tab is active,
+    // even if that tab has not received HTML yet.
+    homepage.style.display = "none";
 
     tabs.forEach(t => {
         t.frame.style.display =
@@ -638,13 +642,14 @@ function updateActiveView() {
     });
 
     if (tab.error) {
-        document.getElementById("status").textContent = tab.error;
+        status.textContent = tab.error;
         return;
     }
 
-    document.getElementById("status").textContent =
+    status.textContent =
         tab.loading ? "Loading..." : "";
 }
+
 
 function loadURL(tab, url, addHistory = true) {
     if (!tab) return;
@@ -652,6 +657,9 @@ function loadURL(tab, url, addHistory = true) {
     tab.url = url;
     tab.error = "";
     tab.loading = true;
+
+    // Clear the previous page while the new page loads.
+    tab.html = "";
 
     if (addHistory) {
         tab.history = tab.history.slice(0, tab.historyIndex + 1);
@@ -762,8 +770,6 @@ function reload() {
 
     loadURL(tab, tab.url, false);
 }
-
-
 
 
 /* STARS BACKGROUND */
