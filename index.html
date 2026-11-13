@@ -651,14 +651,13 @@ function updateActiveView() {
 }
 
 
+
 function loadURL(tab, url, addHistory = true) {
     if (!tab) return;
 
     tab.url = url;
     tab.error = "";
     tab.loading = true;
-
-    // Clear the previous page while the new page loads.
     tab.html = "";
 
     if (addHistory) {
@@ -674,16 +673,24 @@ function loadURL(tab, url, addHistory = true) {
 
     const requestId = ++tab.requestId;
 
-    // Restored the original, simpler proxy request.
     fetch(BACKEND + "?url=" + encodeURIComponent(url))
-        .then(response => response.text())
-        .then(html => {
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
             if (requestId !== tab.requestId) return;
 
-            tab.html = html;
+            if (!data.success || !data.html) {
+                throw new Error(data.error || "No HTML returned.");
+            }
+
+            tab.html = data.html;
             tab.loading = false;
             tab.error = "";
-            tab.frame.srcdoc = html;
+            tab.frame.srcdoc = data.html;
 
             if (tab.id === activeTabId) {
                 updateActiveView();
@@ -702,6 +709,7 @@ function loadURL(tab, url, addHistory = true) {
             }
         });
 }
+
 
 function navigate() {
     const input =
