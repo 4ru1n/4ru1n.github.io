@@ -239,6 +239,24 @@ main {
     font-size: 16px;
 }
 
+/* GAMES BUTTON */
+
+.games-button {
+    position: fixed;
+    top: 108px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: #aaa;
+    font-size: 13px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.games-button:hover {
+    color: white;
+}
+
 .viewer {
     display: none;
     position: absolute;
@@ -319,6 +337,8 @@ main {
 <main>
 
     <section class="homepage" id="homepage">
+        <button id="gamesButton" class="games-button" type="button">Games</button>
+
         <div class="logo">Nebula</div>
 
         <div class="search-box">
@@ -340,7 +360,7 @@ main {
 /* BACKEND */
 
 const BACKEND =
-"https://script.google.com/a/macros/jalsd.org/s/AKfycbzHeApHApkpHw_RS79RBNt7acMfUR6pkvKWC9fY5B6lX4wImNOqlee3HXNDya5Rxv6prg/exec";
+"https://script.google.com/macros/s/AKfycbzHeApHApkpHw_RS79RBNt7acMfUR6pkvKWC9fY5B6lX4wImNOqlee3HXNDya5Rxv6prg/exec";
 
 
 /* AUTHORIZED TEST SITE */
@@ -400,16 +420,13 @@ document.addEventListener("visibilitychange", function() {
 /* ALSO HANDLE WINDOW FOCUS CHANGES */
 
 window.addEventListener("blur", function() {
-    // Delay slightly to see where the focus actually landed
     setTimeout(() => {
         if (document.activeElement && document.activeElement.tagName === "IFRAME") {
-            // If focus moved to an internal iframe, do not trigger the overlay
             return;
         }
         showDefaultOverlay();
     }, 100);
 });
-
 
 
 /* TAB SYSTEM */
@@ -589,20 +606,26 @@ function closeTab(id) {
             document.getElementById("address").value = "";
             document.getElementById("viewerContainer").innerHTML = "";
             document.getElementById("homepage").style.display = "flex";
+            document.getElementById("status").textContent = "";
         }
     }
 
     renderTabs();
 }
 
-/* FIXED: SHOW THE HOMEPAGE WHEN THE ACTIVE TAB IS EMPTY */
+
+/* FIXED: DISPLAY LOADING AND ERROR STATES */
 
 function updateActiveView() {
     const tab = getActiveTab();
+    const homepage = document.getElementById("homepage");
+    const status = document.getElementById("status");
 
-    if (!tab || !tab.html) {
-        document.getElementById("homepage").style.display = "";
-        document.getElementById("status").textContent = "";
+    // Show the complete homepage when there is no tab
+    // or when the active tab is a fresh, empty new tab.
+    if (!tab || !tab.url) {
+        homepage.style.display = "flex";
+        status.textContent = "";
 
         tabs.forEach(t => {
             t.frame.style.display = "none";
@@ -611,7 +634,7 @@ function updateActiveView() {
         return;
     }
 
-    document.getElementById("homepage").style.display = "none";
+    homepage.style.display = "none";
 
     tabs.forEach(t => {
         t.frame.style.display =
@@ -619,13 +642,15 @@ function updateActiveView() {
     });
 
     if (tab.error) {
-        document.getElementById("status").textContent = tab.error;
+        status.textContent = tab.error;
         return;
     }
 
-    document.getElementById("status").textContent =
+    status.textContent =
         tab.loading ? "Loading..." : "";
 }
+
+
 
 function loadURL(tab, url, addHistory = true) {
     if (!tab) return;
@@ -633,6 +658,7 @@ function loadURL(tab, url, addHistory = true) {
     tab.url = url;
     tab.error = "";
     tab.loading = true;
+    tab.html = "";
 
     if (addHistory) {
         tab.history = tab.history.slice(0, tab.historyIndex + 1);
@@ -648,33 +674,43 @@ function loadURL(tab, url, addHistory = true) {
     const requestId = ++tab.requestId;
 
     fetch(BACKEND + "?url=" + encodeURIComponent(url))
-        .then(response => response.text())
-        .then(html => {
-
-            if (requestId !== tab.requestId) return;
-
-            tab.html = html;
-            tab.loading = false;
-            tab.frame.srcdoc = html;
-
-            if (tab.id === activeTabId) {
-                updateActiveView();
+        .then(async response => {
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
             }
 
+            return response.json();
         })
-        .catch(() => {
-
+        .then(data => {
             if (requestId !== tab.requestId) return;
 
+            if (!data.success || !data.html) {
+                throw new Error(data.error || "No HTML returned.");
+            }
+
+            tab.html = data.html;
             tab.loading = false;
-            tab.error = "Unable to load this website.";
+            tab.error = "";
+            tab.frame.srcdoc = data.html;
 
             if (tab.id === activeTabId) {
                 updateActiveView();
             }
+        })
+        .catch(error => {
+            if (requestId !== tab.requestId) return;
 
+            tab.loading = false;
+            tab.error = "Unable to load this website: " + error.message;
+
+            console.error("Nebula proxy error:", error);
+
+            if (tab.id === activeTabId) {
+                updateActiveView();
+            }
         });
 }
+
 
 function navigate() {
     const input =
@@ -732,8 +768,6 @@ function reload() {
 }
 
 
-
-
 /* STARS BACKGROUND */
 
 const canvas = document.getElementById("stars");
@@ -779,6 +813,50 @@ window.addEventListener("mouseout", function(event) {
 
 function drawStars() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw subtle constellation lines near the mouse.
+    for (let i = 0; i < stars.length; i++) {
+        const starA = stars[i];
+
+        const ax = starA.x + starA.offsetX;
+        const ay = starA.y + starA.offsetY;
+
+        const mouseDistance = Math.hypot(ax - mouseX, ay - mouseY);
+
+        if (mouseDistance > 150) continue;
+
+        let connections = 0;
+
+        for (let j = i + 1; j < stars.length; j++) {
+            const starB = stars[j];
+
+            const bx = starB.x + starB.offsetX;
+            const by = starB.y + starB.offsetY;
+
+            const distance = Math.hypot(ax - bx, ay - by);
+            const midpointX = (ax + bx) / 2;
+            const midpointY = (ay + by) / 2;
+            const midpointMouseDistance = Math.hypot(
+                midpointX - mouseX,
+                midpointY - mouseY
+            );
+
+            if (distance < 105 && midpointMouseDistance < 150) {
+                const alpha = (1 - distance / 105) * 0.25;
+
+                ctx.beginPath();
+                ctx.moveTo(ax, ay);
+                ctx.lineTo(bx, by);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.lineWidth = 0.7;
+                ctx.stroke();
+
+                connections++;
+
+                if (connections >= 2) break;
+            }
+        }
+    }
 
     stars.forEach(star => {
 
@@ -1174,6 +1252,7 @@ function openGameInNebulaTab(gameURL, gameName) {
     renderTabs();
 }
 
+const gamesButton = document.getElementById("gamesButton");
 gamesButton.addEventListener("click", openGamesTab);
 
 </script>
