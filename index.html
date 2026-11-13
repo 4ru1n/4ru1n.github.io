@@ -762,16 +762,45 @@ function resizeStars() {
         });
     }
 
-    // Generate random permanent constellation connections.
+    // Connect nearby stars to create natural-looking constellations.
+    const connectedPairs = new Set();
+
     for (let i = 0; i < stars.length; i++) {
 
-        const connectionCount = Math.floor(Math.random() * 3);
+        const nearbyStars = [];
+
+        for (let j = 0; j < stars.length; j++) {
+
+            if (i === j) continue;
+
+            const distance = Math.hypot(
+                stars[i].x - stars[j].x,
+                stars[i].y - stars[j].y
+            );
+
+            if (distance < 145) {
+                nearbyStars.push({
+                    index: j,
+                    distance: distance
+                });
+            }
+        }
+
+        nearbyStars.sort((a, b) => a.distance - b.distance);
+
+        const connectionCount = Math.min(
+            nearbyStars.length,
+            Math.floor(Math.random() * 2) + 1
+        );
 
         for (let j = 0; j < connectionCount; j++) {
 
-            const target = Math.floor(Math.random() * stars.length);
+            const target = nearbyStars[j].index;
+            const pairKey = Math.min(i, target) + "-" + Math.max(i, target);
 
-            if (target !== i) {
+            if (!connectedPairs.has(pairKey)) {
+                connectedPairs.add(pairKey);
+
                 connections.push({
                     a: i,
                     b: target
@@ -781,7 +810,7 @@ function resizeStars() {
     }
 }
 
-// Generate additional random connections around the mouse.
+// Generate connections between nearby stars around the mouse.
 window.addEventListener("mousemove", function(event) {
 
     mouseX = event.clientX;
@@ -799,25 +828,55 @@ window.addEventListener("mousemove", function(event) {
         );
 
         if (distance < 180) {
-            nearbyStars.push(index);
+            nearbyStars.push({
+                index: index,
+                distance: distance
+            });
         }
     });
 
-    nearbyStars.forEach(index => {
+    nearbyStars.sort((a, b) => a.distance - b.distance);
 
-        const connectionCount = Math.floor(Math.random() * 4) + 2;
+    const connectedPairs = new Set();
 
-        for (let i = 0; i < connectionCount; i++) {
+    nearbyStars.forEach(item => {
 
-            const target = Math.floor(Math.random() * stars.length);
+        const nearbyTargets = [];
 
-            if (target !== index) {
-                mouseConnections.push({
-                    a: index,
-                    b: target
+        stars.forEach((star, index) => {
+
+            if (index === item.index) return;
+
+            const distance = Math.hypot(
+                stars[item.index].x - star.x,
+                stars[item.index].y - star.y
+            );
+
+            if (distance < 145) {
+                nearbyTargets.push({
+                    index: index,
+                    distance: distance
                 });
             }
-        }
+        });
+
+        nearbyTargets.sort((a, b) => a.distance - b.distance);
+
+        nearbyTargets.slice(0, 2).forEach(target => {
+
+            const pairKey =
+                Math.min(item.index, target.index) + "-" +
+                Math.max(item.index, target.index);
+
+            if (!connectedPairs.has(pairKey)) {
+                connectedPairs.add(pairKey);
+
+                mouseConnections.push({
+                    a: item.index,
+                    b: target.index
+                });
+            }
+        });
     });
 
 });
@@ -835,7 +894,7 @@ window.addEventListener("mouseout", function(event) {
 function drawStars() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw permanent random constellation connections.
+    // Draw permanent constellation connections.
     ctx.lineWidth = 0.7;
     ctx.strokeStyle = "rgba(150, 160, 255, 0.16)";
 
