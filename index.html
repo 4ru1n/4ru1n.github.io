@@ -239,6 +239,24 @@ main {
     font-size: 16px;
 }
 
+/* GAMES BUTTON */
+
+.games-button {
+    position: fixed;
+    top: 108px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: #aaa;
+    font-size: 13px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.games-button:hover {
+    color: white;
+}
+
 .viewer {
     display: none;
     position: absolute;
@@ -319,6 +337,8 @@ main {
 <main>
 
     <section class="homepage" id="homepage">
+        <button id="gamesButton" class="games-button" type="button">Games</button>
+
         <div class="logo">Nebula</div>
 
         <div class="search-box">
@@ -1218,6 +1238,7 @@ function openGameInNebulaTab(gameURL, gameName) {
     renderTabs();
 }
 
+const gamesButton = document.getElementById("gamesButton");
 gamesButton.addEventListener("click", openGamesTab);
 
 </script>
