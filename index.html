@@ -724,22 +724,19 @@ function reload() {
 }
 
 
+
 /* STARS BACKGROUND */
 
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
 let stars = [];
-let connections = [];
-let mouseConnections = [];
 
 function resizeStars() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     stars = [];
-    connections = [];
-    mouseConnections = [];
 
     for (let i = 0; i < 100; i++) {
         stars.push({
@@ -749,102 +746,11 @@ function resizeStars() {
             speed: Math.random() * 0.3 + 0.05
         });
     }
-
-    // Random permanent constellation connections.
-    for (let i = 0; i < stars.length; i++) {
-        const connectionCount = Math.floor(Math.random() * 3);
-
-        for (let j = 0; j < connectionCount; j++) {
-            const target = Math.floor(Math.random() * stars.length);
-
-            if (target !== i) {
-                connections.push({
-                    a: i,
-                    b: target
-                });
-            }
-        }
-    }
 }
-
-// Only create a few subtle connections near the mouse.
-window.addEventListener("mousemove", function(event) {
-    mouseConnections = [];
-
-    const nearbyStars = [];
-
-    stars.forEach((star, index) => {
-        const distance = Math.hypot(
-            star.x - event.clientX,
-            star.y - event.clientY
-        );
-
-        if (distance < 180) {
-            nearbyStars.push(index);
-        }
-    });
-
-    // Occasionally add just one connection.
-    if (nearbyStars.length > 1 && Math.random() < 0.12) {
-        const first = nearbyStars[
-            Math.floor(Math.random() * nearbyStars.length)
-        ];
-
-        const second = nearbyStars[
-            Math.floor(Math.random() * nearbyStars.length)
-        ];
-
-        if (first !== second) {
-            mouseConnections.push({
-                a: first,
-                b: second
-            });
-        }
-    }
-});
-
-window.addEventListener("mouseout", function(event) {
-    if (!event.relatedTarget) {
-        mouseConnections = [];
-    }
-});
 
 function drawStars() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw permanent random constellation connections.
-    ctx.lineWidth = 0.7;
-    ctx.strokeStyle = "rgba(150, 160, 255, 0.16)";
-
-    connections.forEach(connection => {
-        const a = stars[connection.a];
-        const b = stars[connection.b];
-
-        if (!a || !b) return;
-
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
-    });
-
-    // Draw very subtle mouse connections.
-    ctx.lineWidth = 0.7;
-    ctx.strokeStyle = "rgba(170, 180, 255, 0.22)";
-
-    mouseConnections.forEach(connection => {
-        const a = stars[connection.a];
-        const b = stars[connection.b];
-
-        if (!a || !b) return;
-
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
-    });
-
-    // Draw stars.
     stars.forEach(star => {
         ctx.fillStyle = "white";
         ctx.globalAlpha = Math.random() * 0.5 + 0.3;
@@ -852,8 +758,6 @@ function drawStars() {
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         ctx.fill();
-
-        ctx.globalAlpha = 1;
 
         star.y += star.speed;
 
@@ -870,6 +774,7 @@ window.addEventListener("resize", resizeStars);
 
 resizeStars();
 drawStars();
+
 
 
 /* GAMES BUTTON */
@@ -972,9 +877,9 @@ body {
 </button>
 
 <!-- Placeholder 2 (code below) -->
-<button class="game-card" data-game-index="1" data-game-url="https://example.com/">
-<img src="https://www.desmos.com/apple-touch-icon.png">
-<span>Placeholder 2</span>
+<button class="game-card" data-game-index="1" data-game-url="https://sudoku-online.github.io/a5/basketball-stars/">
+<img src="https://doodlebaseballplay.com/assets/upload/doodle-baseball/webp/basketball-stars.webp">
+<span>Basketball Stars</span>
 </button>
 
 <!-- Placeholder 3 (code below) -->
