@@ -601,7 +601,7 @@ function updateActiveView() {
     const tab = getActiveTab();
 
     if (!tab || !tab.html) {
-        document.getElementById("homepage").style.display = "flex";
+        document.getElementById("homepage").style.display = "";
         document.getElementById("status").textContent = "";
 
         tabs.forEach(t => {
