@@ -621,7 +621,9 @@ function updateActiveView() {
     const homepage = document.getElementById("homepage");
     const status = document.getElementById("status");
 
-    if (!tab) {
+    // Show the complete homepage when there is no tab
+    // or when the active tab is a fresh, empty new tab.
+    if (!tab || !tab.url) {
         homepage.style.display = "flex";
         status.textContent = "";
 
@@ -632,8 +634,6 @@ function updateActiveView() {
         return;
     }
 
-    // Hide the homepage whenever a tab is active,
-    // even if that tab has not received HTML yet.
     homepage.style.display = "none";
 
     tabs.forEach(t => {
@@ -674,24 +674,11 @@ function loadURL(tab, url, addHistory = true) {
 
     const requestId = ++tab.requestId;
 
-    fetch(BACKEND + "?url=" + encodeURIComponent(url), {
-        method: "GET",
-        redirect: "follow",
-        cache: "no-store"
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("HTTP " + response.status);
-            }
-
-            return response.text();
-        })
+    // Restored the original, simpler proxy request.
+    fetch(BACKEND + "?url=" + encodeURIComponent(url))
+        .then(response => response.text())
         .then(html => {
             if (requestId !== tab.requestId) return;
-
-            if (!html || !html.trim()) {
-                throw new Error("Empty response");
-            }
 
             tab.html = html;
             tab.loading = false;
@@ -706,7 +693,7 @@ function loadURL(tab, url, addHistory = true) {
             if (requestId !== tab.requestId) return;
 
             tab.loading = false;
-            tab.error = "Unable to load this website.";
+            tab.error = "Unable to load this website: " + error.message;
 
             console.error("Nebula proxy error:", error);
 
