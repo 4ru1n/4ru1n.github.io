@@ -239,24 +239,6 @@ main {
     font-size: 16px;
 }
 
-/* GAMES BUTTON */
-
-.games-button {
-    position: fixed;
-    top: 108px;
-    right: 20px;
-    background: transparent;
-    border: none;
-    color: #aaa;
-    font-size: 13px;
-    cursor: pointer;
-    z-index: 10;
-}
-
-.games-button:hover {
-    color: white;
-}
-
 .viewer {
     display: none;
     position: absolute;
@@ -337,8 +319,6 @@ main {
 <main>
 
     <section class="homepage" id="homepage">
-        <button id="gamesButton" class="games-button" type="button">Games</button>
-
         <div class="logo">Nebula</div>
 
         <div class="search-box">
@@ -800,50 +780,6 @@ window.addEventListener("mouseout", function(event) {
 function drawStars() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw subtle constellation lines near the mouse.
-    for (let i = 0; i < stars.length; i++) {
-        const starA = stars[i];
-
-        const ax = starA.x + starA.offsetX;
-        const ay = starA.y + starA.offsetY;
-
-        const mouseDistance = Math.hypot(ax - mouseX, ay - mouseY);
-
-        if (mouseDistance > 150) continue;
-
-        let connections = 0;
-
-        for (let j = i + 1; j < stars.length; j++) {
-            const starB = stars[j];
-
-            const bx = starB.x + starB.offsetX;
-            const by = starB.y + starB.offsetY;
-
-            const distance = Math.hypot(ax - bx, ay - by);
-            const midpointX = (ax + bx) / 2;
-            const midpointY = (ay + by) / 2;
-            const midpointMouseDistance = Math.hypot(
-                midpointX - mouseX,
-                midpointY - mouseY
-            );
-
-            if (distance < 105 && midpointMouseDistance < 150) {
-                const alpha = (1 - distance / 105) * 0.25;
-
-                ctx.beginPath();
-                ctx.moveTo(ax, ay);
-                ctx.lineTo(bx, by);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
-                ctx.lineWidth = 0.7;
-                ctx.stroke();
-
-                connections++;
-
-                if (connections >= 2) break;
-            }
-        }
-    }
-
     stars.forEach(star => {
 
         // Move stars away from the mouse.
@@ -1238,7 +1174,6 @@ function openGameInNebulaTab(gameURL, gameName) {
     renderTabs();
 }
 
-const gamesButton = document.getElementById("gamesButton");
 gamesButton.addEventListener("click", openGamesTab);
 
 </script>
