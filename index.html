@@ -360,7 +360,7 @@ main {
 /* BACKEND */
 
 const BACKEND =
-"https://script.google.com/macros/s/AKfycbzHeApHApkpHw_RS79RBNt7acMfUR6pkvKWC9fY5B6lX4wImNOqlee3HXNDya5Rxv6prg/exec";
+"https://script.google.com/a/macros/jalsd.org/s/AKfycbzHeApHApkpHw_RS79RBNt7acMfUR6pkvKWC9fY5B6lX4wImNOqlee3HXNDya5Rxv6prg/exec";
 
 
 /* AUTHORIZED TEST SITE */
@@ -420,13 +420,16 @@ document.addEventListener("visibilitychange", function() {
 /* ALSO HANDLE WINDOW FOCUS CHANGES */
 
 window.addEventListener("blur", function() {
+    // Delay slightly to see where the focus actually landed
     setTimeout(() => {
         if (document.activeElement && document.activeElement.tagName === "IFRAME") {
+            // If focus moved to an internal iframe, do not trigger the overlay
             return;
         }
         showDefaultOverlay();
     }, 100);
 });
+
 
 
 /* TAB SYSTEM */
@@ -606,26 +609,20 @@ function closeTab(id) {
             document.getElementById("address").value = "";
             document.getElementById("viewerContainer").innerHTML = "";
             document.getElementById("homepage").style.display = "flex";
-            document.getElementById("status").textContent = "";
         }
     }
 
     renderTabs();
 }
 
-
-/* FIXED: DISPLAY LOADING AND ERROR STATES */
+/* FIXED: SHOW THE HOMEPAGE WHEN THE ACTIVE TAB IS EMPTY */
 
 function updateActiveView() {
     const tab = getActiveTab();
-    const homepage = document.getElementById("homepage");
-    const status = document.getElementById("status");
 
-    // Show the complete homepage when there is no tab
-    // or when the active tab is a fresh, empty new tab.
-    if (!tab || !tab.url) {
-        homepage.style.display = "flex";
-        status.textContent = "";
+    if (!tab || !tab.html) {
+        document.getElementById("homepage").style.display = "";
+        document.getElementById("status").textContent = "";
 
         tabs.forEach(t => {
             t.frame.style.display = "none";
@@ -634,7 +631,7 @@ function updateActiveView() {
         return;
     }
 
-    homepage.style.display = "none";
+    document.getElementById("homepage").style.display = "none";
 
     tabs.forEach(t => {
         t.frame.style.display =
@@ -642,15 +639,13 @@ function updateActiveView() {
     });
 
     if (tab.error) {
-        status.textContent = tab.error;
+        document.getElementById("status").textContent = tab.error;
         return;
     }
 
-    status.textContent =
+    document.getElementById("status").textContent =
         tab.loading ? "Loading..." : "";
 }
-
-
 
 function loadURL(tab, url, addHistory = true) {
     if (!tab) return;
@@ -658,7 +653,6 @@ function loadURL(tab, url, addHistory = true) {
     tab.url = url;
     tab.error = "";
     tab.loading = true;
-    tab.html = "";
 
     if (addHistory) {
         tab.history = tab.history.slice(0, tab.historyIndex + 1);
@@ -674,43 +668,33 @@ function loadURL(tab, url, addHistory = true) {
     const requestId = ++tab.requestId;
 
     fetch(BACKEND + "?url=" + encodeURIComponent(url))
-        .then(async response => {
-            if (!response.ok) {
-                throw new Error("HTTP " + response.status);
-            }
+        .then(response => response.text())
+        .then(html => {
 
-            return response.json();
-        })
-        .then(data => {
             if (requestId !== tab.requestId) return;
 
-            if (!data.success || !data.html) {
-                throw new Error(data.error || "No HTML returned.");
-            }
-
-            tab.html = data.html;
+            tab.html = html;
             tab.loading = false;
-            tab.error = "";
-            tab.frame.srcdoc = data.html;
+            tab.frame.srcdoc = html;
 
             if (tab.id === activeTabId) {
                 updateActiveView();
             }
+
         })
-        .catch(error => {
+        .catch(() => {
+
             if (requestId !== tab.requestId) return;
 
             tab.loading = false;
-            tab.error = "Unable to load this website: " + error.message;
-
-            console.error("Nebula proxy error:", error);
+            tab.error = "Unable to load this website.";
 
             if (tab.id === activeTabId) {
                 updateActiveView();
             }
+
         });
 }
-
 
 function navigate() {
     const input =
@@ -766,6 +750,8 @@ function reload() {
 
     loadURL(tab, tab.url, false);
 }
+
+
 
 
 /* STARS BACKGROUND */
