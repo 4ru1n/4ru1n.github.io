@@ -673,12 +673,7 @@ function loadURL(tab, url, addHistory = true) {
 
     const requestId = ++tab.requestId;
 
-    fetch(BACKEND + "?url=" + encodeURIComponent(url), {
-        method: "GET",
-        mode: "cors",
-        credentials: "include",
-        redirect: "follow"
-    })
+    fetch(BACKEND + "?url=" + encodeURIComponent(url))
         .then(async response => {
             if (!response.ok) {
                 throw new Error("HTTP " + response.status);
