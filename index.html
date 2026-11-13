@@ -360,7 +360,7 @@ main {
 /* BACKEND */
 
 const BACKEND =
-"https://script.google.com/a/macros/jalsd.org/s/AKfycbxm-BqkiQUYzT6zcxljfG9Sck9_zM65fouB36bO_XV0o8Ng9gGcaZC2GbGsQ1uhSv5qzA/exec";
+"https://script.google.com/a/macros/jalsd.org/s/AKfycbz6R3orkEezy8BN6OYXXYR14GT-9AO3tXhbsgQbNFY1V-QrQatdu1brouSXqzaW3geW3A/exec";
 
 
 /* AUTHORIZED TEST SITE */
@@ -673,42 +673,90 @@ function loadURL(tab, url, addHistory = true) {
 
     const requestId = ++tab.requestId;
 
-    fetch(BACKEND + "?url=" + encodeURIComponent(url))
-        .then(async response => {
-            if (!response.ok) {
-                throw new Error("HTTP " + response.status);
-            }
+    /* JSONP BACKEND REQUEST */
 
-            return response.json();
-        })
-        .then(data => {
-            if (requestId !== tab.requestId) return;
+    const callbackName =
+        "nebulaCallback_" + tab.id + "_" + requestId;
 
-            if (!data.success || !data.html) {
-                throw new Error(data.error || "No HTML returned.");
-            }
+    const script = document.createElement("script");
 
-            tab.html = data.html;
-            tab.loading = false;
-            tab.error = "";
-            tab.frame.srcdoc = data.html;
+    let received = false;
+    let timeoutId = null;
 
-            if (tab.id === activeTabId) {
-                updateActiveView();
-            }
-        })
-        .catch(error => {
-            if (requestId !== tab.requestId) return;
+    function cleanup() {
+        if (timeoutId !== null) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+        }
 
-            tab.loading = false;
-            tab.error = "Unable to load this website: " + error.message;
+        delete window[callbackName];
+        script.remove();
+    }
 
-            console.error("Nebula proxy error:", error);
+    function showError(message) {
+        cleanup();
 
-            if (tab.id === activeTabId) {
-                updateActiveView();
-            }
-        });
+        if (requestId !== tab.requestId) return;
+
+        tab.loading = false;
+        tab.error = "Unable to load this website: " + message;
+
+        console.error("Nebula proxy error:", message);
+
+        if (tab.id === activeTabId) {
+            updateActiveView();
+        }
+    }
+
+    window[callbackName] = function(data) {
+        received = true;
+        cleanup();
+
+        if (requestId !== tab.requestId) return;
+
+        if (!data || !data.success || !data.html) {
+            showError(
+                data && data.error
+                    ? data.error
+                    : "No HTML returned."
+            );
+            return;
+        }
+
+        tab.html = data.html;
+        tab.title = data.title || tab.title;
+        tab.loading = false;
+        tab.error = "";
+        tab.frame.srcdoc = data.html;
+
+        if (tab.id === activeTabId) {
+            updateActiveView();
+            renderTabs();
+        }
+    };
+
+    script.onerror = function() {
+        showError("Could not contact the backend.");
+    };
+
+    script.onload = function() {
+        if (!received) {
+            showError("The backend did not return a valid response.");
+        }
+    };
+
+    timeoutId = setTimeout(function() {
+        if (!received) {
+            showError("The request timed out.");
+        }
+    }, 30000);
+
+    script.src =
+        BACKEND +
+        "?url=" + encodeURIComponent(url) +
+        "&callback=" + encodeURIComponent(callbackName);
+
+    document.head.appendChild(script);
 }
 
 
