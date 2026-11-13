@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -667,32 +666,45 @@ function loadURL(tab, url, addHistory = true) {
 
     const requestId = ++tab.requestId;
 
-    fetch(BACKEND + "?url=" + encodeURIComponent(url))
-        .then(response => response.text())
-        .then(html => {
+    fetch(BACKEND + "?url=" + encodeURIComponent(url), {
+        method: "GET",
+        redirect: "follow",
+        cache: "no-store"
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
+            }
 
+            return response.text();
+        })
+        .then(html => {
             if (requestId !== tab.requestId) return;
+
+            if (!html || !html.trim()) {
+                throw new Error("Empty response");
+            }
 
             tab.html = html;
             tab.loading = false;
+            tab.error = "";
             tab.frame.srcdoc = html;
 
             if (tab.id === activeTabId) {
                 updateActiveView();
             }
-
         })
-        .catch(() => {
-
+        .catch(error => {
             if (requestId !== tab.requestId) return;
 
             tab.loading = false;
             tab.error = "Unable to load this website.";
 
+            console.error("Nebula proxy error:", error);
+
             if (tab.id === activeTabId) {
                 updateActiveView();
             }
-
         });
 }
 
